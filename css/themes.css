@@ -1,0 +1,86 @@
+/* ===== ТЕМЫ ОФОРМЛЕНИЯ ===== */
+
+/* Тёмная тема (по умолчанию) */
+:root,
+[data-theme="dark"] {
+    --bg-primary: #0a0a0c;
+    --bg-secondary: #111114;
+    --bg-card: #18181c;
+    --bg-card-hover: #1f1f24;
+    --bg-elevated: #222228;
+    --text-primary: #f0ece6;
+    --text-secondary: #b0a99e;
+    --text-muted: #7a7368;
+    --accent: #c9965a;
+    --accent-light: #d4a574;
+    --accent-dark: #a67c4a;
+    --accent-glow: rgba(201, 150, 90, 0.25);
+    --green-accent: #5a7a4a;
+    --green-light: #6d9460;
+    --border: #2a2a30;
+    --border-light: #33333a;
+    --danger: #d4554a;
+    --success: #5a9a5a;
+    --header-bg: rgba(10, 10, 12, 0.92);
+    --overlay: rgba(0, 0, 0, 0.7);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 40px var(--accent-glow);
+}
+
+/* Светлая тема */
+[data-theme="light"] {
+    --bg-primary: #f5f0eb;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f8f4ef;
+    --bg-elevated: #e8e0d5;
+    --text-primary: #2c2416;
+    --text-secondary: #5c5344;
+    --text-muted: #8a7e6b;
+    --accent: #b8863c;
+    --accent-light: #c9965a;
+    --accent-dark: #9a6f32;
+    --accent-glow: rgba(184, 134, 60, 0.2);
+    --green-accent: #5a7a4a;
+    --green-light: #6d9460;
+    --border: #d9cebb;
+    --border-light: #c8bda9;
+    --danger: #c0392b;
+    --success: #27ae60;
+    --header-bg: rgba(245, 240, 235, 0.92);
+    --overlay: rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.15);
+    --shadow-glow: 0 0 40px var(--accent-glow);
+}
+
+/* Лесная тема */
+[data-theme="forest"] {
+    --bg-primary: #1a2f1a;
+    --bg-secondary: #1f331f;
+    --bg-card: #243624;
+    --bg-card-hover: #2a3f2a;
+    --bg-elevated: #2e442e;
+    --text-primary: #e6f0d8;
+    --text-secondary: #b9cc9e;
+    --text-muted: #8a9e6e;
+    --accent: #c49a3c;
+    --accent-light: #d4a574;
+    --accent-dark: #a67c4a;
+    --accent-glow: rgba(196, 154, 60, 0.25);
+    --green-accent: #7a9a4a;
+    --green-light: #8daa60;
+    --border: #2e442e;
+    --border-light: #3a553a;
+    --danger: #d4554a;
+    --success: #5a9a5a;
+    --header-bg: rgba(26, 47, 26, 0.92);
+    --overlay: rgba(0, 0, 0, 0.7);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.6);
+    --shadow-glow: 0 0 40px var(--accent-glow);
+}

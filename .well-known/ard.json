@@ -1,0 +1,32 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Muhomor.spb.ru",
+    "identifier": "muhomor.spb.ru"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:muhomor.spb.ru:knowledge:llms-txt",
+      "displayName": "Muhomor.spb.ru — индекс страниц для AI-агентов",
+      "type": "text/plain",
+      "url": "https://muhomor.spb.ru/llms.txt",
+      "description": "Структурированный индекс каталога, блога, новостей, FAQ и акций магазина Muhomor.spb.ru.",
+      "representativeQueries": [
+        "магазин сушёных мухоморов в Санкт-Петербурге",
+        "купить сушёные мухоморы с доставкой",
+        "мухомор красный сушёный цена"
+      ]
+    },
+    {
+      "identifier": "urn:air:muhomor.spb.ru:knowledge:sitemap",
+      "displayName": "Muhomor.spb.ru — карта сайта",
+      "type": "application/xml",
+      "url": "https://muhomor.spb.ru/sitemap.xml",
+      "description": "Полный список URL сайта для поисковых систем и AI-краулеров.",
+      "representativeQueries": [
+        "все страницы магазина мухоморов",
+        "каталог товаров Muhomor.spb.ru"
+      ]
+    }
+  ]
+}

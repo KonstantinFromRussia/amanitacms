@@ -1,0 +1,16 @@
+# Реальные данные
+config.yaml
+muhomor-*/
+logs/
+reports/
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/

@@ -1,0 +1,147 @@
+RewriteEngine On
+
+# Отключаем MultiViews, чтобы не было конфликтов при ЧПУ и sitemap
+Options -MultiViews
+
+# ============================================================
+# РЕДИРЕКТЫ: HTTP → HTTPS и WWW → без WWW
+# ============================================================
+# ВАЖНО: эти правила должны стоять ДО всех остальных,
+# чтобы избежать двойных редиректов и конфликтов с ЧПУ.
+
+# 1. Принудительный HTTPS (если запрос пришёл по HTTP)
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# 2. Убираем WWW (склеиваем зеркала, чтобы не было дублей)
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ https://%1%{REQUEST_URI} [L,R=301]
+
+# ============================================================
+# СЖАТИЕ GZIP
+# ============================================================
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+    AddOutputFilterByType DEFLATE application/javascript application/json
+    AddOutputFilterByType DEFLATE application/xml application/rss+xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE font/woff2 font/woff
+</IfModule>
+
+# ============================================================
+# КЭШИРОВАНИЕ СТАТИКИ
+# ============================================================
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif  "access plus 1 year"
+    ExpiresByType image/png  "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/woff  "access plus 1 year"
+    ExpiresByType text/css        "access plus 1 month"
+    ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+</IfModule>
+
+# ============================================================
+# ЗАГОЛОВКИ
+# ============================================================
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|jpg|jpeg|png|gif|webp|svg|woff2|woff)$">
+        Header set Cache-Control "public, max-age=2592000, immutable"
+    </FilesMatch>
+
+    <FilesMatch "^(api\.php|sitemap\.php|robots\.php)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    </FilesMatch>
+
+    <FilesMatch "\.(php|html)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+# ============================================================
+# БЕЗОПАСНОСТЬ
+# ============================================================
+
+# Запрет доступа к папке данных
+RedirectMatch 403 ^/data/.*$
+
+# Запрет листинга директорий
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>
+
+# ------------------------------------------------------------
+# ЗАПРЕТ ИСПОЛНЕНИЯ СКРИПТОВ В СТАТИЧЕСКИХ ПАПКАХ (19.10.2026 / исправлено 24.10.2026)
+# ------------------------------------------------------------
+# Причина: в /css/ был обнаружен styles.php (веб-шелл). PHP в статических
+# папках исполняться не должен. Правило запрещает любые скриптовые
+# расширения в css, js, fonts, webfonts, favicon, doc, bundle.
+# Работает и на mod_php, и на PHP-FPM, и на LiteSpeed.
+RewriteRule ^(css|js|fonts|webfonts|favicon|doc|bundle)/.*\.(php|php[0-9]?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp)$ - [F,L,NC]
+
+# ------------------------------------------------------------
+# ЗАЩИТА /includes/ — прямой доступ к PHP-файлам запрещён,
+# но require из корня сайта продолжает работать.
+# ------------------------------------------------------------
+RewriteRule ^includes/.*\.(php|php[0-9]?|phtml|phar)$ - [F,L,NC]
+
+# ============================================================
+# БЛОКИРОВКА СКАНЕРОВ УЯЗВИМОСТЕЙ
+# ============================================================
+# Блокируем запросы к типичным «приманкам» сканеров:
+# /.env, /.aws/credentials, /phpinfo.php, /wp-login.php и т.д.
+# ВАЖНО: не блокируем /api/ и /admin/ — они легитимные.
+RewriteCond %{REQUEST_URI} ^/(phpinfo|info\.php|test\.php|debug|shell|webshell|\.env|\.aws|\.git|wp\-|config\.(php|json|js|yaml|env)|credentials|secrets|\.npmrc|\.boto|\.s3cfg|Dockerfile|composer\.json|database\.sql|appsettings|_profiler) [NC]
+RewriteRule ^ - [F,L]
+
+# ============================================================
+# КРАСИВЫЕ URL (ЧПУ)
+# ============================================================
+
+# ЗАПРЕТ любых скриптов в /uploads/ — работает и на mod_php, и на PHP-FPM
+<IfModule mod_rewrite.c>
+    RewriteRule ^uploads/.*\.(php|php[0-9]?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp)$ - [F,L,NC]
+</IfModule>
+
+# API
+RewriteRule ^api/(.*)$ api.php?action=$1 [L,QSA]
+
+# Перенаправление /admin → /admin.php (чтобы работал вход и не было 404)
+RewriteRule ^admin$ admin.php [L]
+
+# Sitemap и robots
+RewriteRule ^sitemap\.xml$ sitemap.php [L]
+RewriteRule ^robots\.txt$  robots.php [L]
+
+# Отдельные записи (ЧПУ)
+RewriteRule ^product/([a-z0-9-]+)\.html$   page.php?type=product&slug=$1   [L,QSA]
+RewriteRule ^blog/([a-z0-9-]+)\.html$      page.php?type=blog&slug=$1      [L,QSA]
+RewriteRule ^news/([a-z0-9-]+)\.html$      page.php?type=news&slug=$1      [L,QSA]
+RewriteRule ^promotion/([a-z0-9-]+)\.html$ page.php?type=promotion&slug=$1 [L,QSA]
+
+# Старые ссылки по ID
+RewriteRule ^product/([0-9]+)$ page.php?type=product&id=$1 [L,QSA]
+RewriteRule ^blog/([0-9]+)$    page.php?type=blog&id=$1    [L,QSA]
+RewriteRule ^news/([0-9]+)$    page.php?type=news&id=$1    [L,QSA]
+
+# Разделы и страницы
+RewriteRule ^catalog$    catalog.php    [L]
+RewriteRule ^blog$       blog.php       [L]
+RewriteRule ^news$       news.php       [L]
+RewriteRule ^contacts$   contacts.php   [L]
+RewriteRule ^faq$        faq.php        [L]
+RewriteRule ^promotions$ promotions.php [L]
+RewriteRule ^reviews$    reviews.php    [L]
+RewriteRule ^search$     search.php     [L,QSA]
+
+# ============================================================
+# FALLBACK → index.php (обработка 404 внутри index.php)
+# ============================================================
+RewriteCond %{REQUEST_URI} !^/(uploads|css|js|fonts|webfonts|favicon|doc)/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L]

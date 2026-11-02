@@ -1,0 +1,234 @@
+# ============================================================
+# Конфигурация уникализации CMS
+# ============================================================
+
+# --- Источник и назначение ---
+source:
+  path: "./muhomor-spb"
+
+  # Не копировать вообще (служебные папки и логи)
+  exclude:
+    - ".git"
+    - "node_modules"
+    - "__pycache__"
+    - ".idea"
+    - ".vscode"
+    - "logs"
+    - "reports"
+    - "*.log"
+
+  # Копировать как есть, НЕ кастомизировать (админка и сторонние библиотеки)
+  skip_process:
+    - "admin.php"
+    - "admin.js"
+    - "jquery-3.6.0.min.js"
+    - "summernote-lite.js"
+    - "summernote-lite.min.js"
+    - "summernote-ru-RU.js"
+    - "summernote"
+
+destination:
+  path: "./muhomor-msk"
+  overwrite: false
+  backup_before_overwrite: true
+
+# --- Уникализация классов ---
+unique:
+  prefix: "msk"
+  mode: "safe"                     # safe | aggressive
+
+# --- Обрабатываемые файлы ---
+files:
+  extensions: [".php", ".css", ".js", ".html", ".htm"]
+  encoding:
+    read: "utf-8"
+    fallback: "cp1251"
+    write: "utf-8"
+
+# ============================================================
+# УДАЛЕНИЕ КОММЕНТАРИЕВ
+# ============================================================
+
+# HTML-комментарии: <!-- ... -->
+html:
+  remove_comments: true            # Удалять HTML-комментарии
+  keep_conditional: true           # Оставить <!--[if IE]> ... <![endif]-->
+  
+  # Перемешивание блоков на главной
+  shuffle_index_blocks: true       # Перемешивать блоки в index.php
+  fixed_first_block: "Hero"        # Блок, который всегда первый
+  shuffle_blocks:                  # Блоки, которые перемешиваются
+    - "Преимущества"
+    - "Популярные товары"
+    - "Превью блога"
+    - "Превью новостей"
+    - "Блок акций"
+    - "Блок отзывов"
+
+# CSS-комментарии: /* ... */
+css:
+  remove_comments: true            # Удалять CSS-комментарии
+  keep_important: true             # Оставить /*! ... */ (важные)
+
+# ============================================================
+# СПИСОК КЛАССОВ, КОТОРЫЕ НЕ ЗАМЕНЯЕМ
+# ============================================================
+skip_classes:
+  # Tailwind layout
+  - "container"
+  - "row"
+  - "col"
+  - "grid"
+  - "flex"
+  - "block"
+  - "inline"
+  - "inline-block"
+  - "hidden"
+  - "visible"
+  - "relative"
+  - "absolute"
+  - "fixed"
+  - "sticky"
+  - "static"
+  # Tailwind spacing
+  - "p-0"
+  - "p-1"
+  - "p-2"
+  - "p-3"
+  - "p-4"
+  - "p-5"
+  - "p-6"
+  - "p-8"
+  - "p-10"
+  - "px-0"
+  - "px-1"
+  - "px-2"
+  - "px-3"
+  - "px-4"
+  - "px-6"
+  - "px-8"
+  - "py-0"
+  - "py-1"
+  - "py-2"
+  - "py-3"
+  - "py-4"
+  - "py-6"
+  - "py-8"
+  - "m-0"
+  - "m-1"
+  - "m-2"
+  - "m-3"
+  - "m-4"
+  - "m-5"
+  - "m-6"
+  - "m-8"
+  - "mt-0"
+  - "mt-1"
+  - "mt-2"
+  - "mt-3"
+  - "mt-4"
+  - "mt-6"
+  - "mt-8"
+  - "mt-12"
+  - "mb-0"
+  - "mb-1"
+  - "mb-2"
+  - "mb-3"
+  - "mb-4"
+  - "mb-6"
+  - "mb-8"
+  - "mb-12"
+  # Tailwind text
+  - "text-xs"
+  - "text-sm"
+  - "text-base"
+  - "text-lg"
+  - "text-xl"
+  - "text-2xl"
+  - "text-3xl"
+  - "text-4xl"
+  - "text-5xl"
+  - "text-6xl"
+  - "text-7xl"
+  - "text-left"
+  - "text-center"
+  - "text-right"
+  - "text-justify"
+  - "font-thin"
+  - "font-light"
+  - "font-normal"
+  - "font-medium"
+  - "font-semibold"
+  - "font-bold"
+  - "font-extrabold"
+  - "font-black"
+  - "uppercase"
+  - "lowercase"
+  - "capitalize"
+  - "normal-case"
+  # Tailwind width/height
+  - "w-full"
+  - "w-auto"
+  - "h-full"
+  - "h-auto"
+  - "h-screen"
+  - "min-w-full"
+  - "max-w-full"
+  - "max-w-7xl"
+  - "max-w-4xl"
+  - "max-w-2xl"
+  # Tailwind colors
+  - "bg-white"
+  - "bg-black"
+  - "bg-transparent"
+  - "bg-primary"
+  - "bg-secondary"
+  - "text-white"
+  - "text-black"
+  - "text-primary"
+  - "text-secondary"
+  - "border"
+  - "border-0"
+  - "border-2"
+  - "border-4"
+  - "rounded"
+  - "rounded-full"
+  - "rounded-lg"
+  - "rounded-xl"
+  - "rounded-md"
+  - "rounded-sm"
+  # Tailwind effects
+  - "shadow"
+  - "shadow-sm"
+  - "shadow-md"
+  - "shadow-lg"
+  - "shadow-xl"
+  - "opacity-0"
+  - "opacity-50"
+  - "opacity-100"
+  - "transition"
+  - "transform"
+  - "cursor-pointer"
+  # Стандартные
+  - "active"
+  - "open"
+  - "closed"
+  - "show"
+  - "hide"
+
+skip_id_attributes: true
+skip_data_attributes: true
+
+# ============================================================
+# ЛОГИРОВАНИЕ И ОТЧЁТ
+# ============================================================
+logging:
+  enabled: true
+  level: "INFO"
+  file: "logs/customize_{date}.log"
+  console: true
+
+report:
+  enabled: true
+  file: "reports/report_{prefix}_{date}.json"
+  include_replaced: true

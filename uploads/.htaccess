@@ -1,0 +1,19 @@
+# Полный запрет исполнения PHP в этой папке
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+
+# Запретить исполнение любых скриптов
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .phar .pl .py .cgi .sh
+RemoveType .php .phtml .php3 .php4 .php5 .php7 .phar .pl .py .cgi .sh
+
+# Принудительно отдавать всё как plain/text (не исполнять)
+<FilesMatch "\.(php|php[0-9]?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp)$">
+    Require all denied
+</FilesMatch>
+
+# Запретить листинг
+Options -Indexes

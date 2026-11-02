@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /data/
+Sitemap: https://muhomor.spb.ru/sitemap.xml
