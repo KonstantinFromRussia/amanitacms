@@ -110,6 +110,11 @@ $ageCheckEnabled = $settings['age_check_enabled'] ?? 'yes';
                     <strong class="text-[var(--accent)]"><?php echo number_format(getVisitorCount(), 0, ',', ' '); ?></strong>
                     <span>человек</span>
                 </span>
+                <!-- НОВАЯ ССЫЛКА НА CMS -->
+                <span class="hidden sm:inline text-[var(--text-muted)]">·</span>
+                <span class="text-[var(--text-muted)]">
+                    Создано на <a href="https://amanitacms.ru" target="_blank" rel="noopener" class="hover:text-[var(--accent)] transition-colors">AmanitaCMS</a>
+                </span>
             </div>
         </div>
     </div>
