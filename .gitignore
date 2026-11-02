@@ -1,0 +1,17 @@
+# Секреты (НЕ ЗАЛИВАТЬ НА GITHUB)
+includes/mail-config.php
+data/settings.json
+security-check.php
+data/counter.log
+data/counter.lock
+
+# Временные и системные файлы
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Сборки и бандлы
+/bundle/
+node_modules/
+vendor/
