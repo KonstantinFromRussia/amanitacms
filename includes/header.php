@@ -84,8 +84,8 @@ if ($logoUrl) {
                 <a class="nav-link" href="/" <?php echo $isActive('/') ? 'aria-current="page"' : ''; ?>>Главная</a>
                 <a class="nav-link" href="/catalog" <?php echo $isActive('/catalog') ? 'aria-current="page"' : ''; ?>>Каталог</a>
                 
-                <!-- НОВАЯ ССЫЛКА: О Грибомане -->
-                <a class="nav-link" href="/about.php" <?php echo $isActive('/about.php') ? 'aria-current="page"' : ''; ?>>О Грибомане</a>
+                <!-- НОВАЯ ССЫЛКА: О Нас -->
+                <a class="nav-link" href="/about.php" <?php echo $isActive('/about.php') ? 'aria-current="page"' : ''; ?>>О Нас</a>
                 
                 <a class="nav-link" href="/blog" <?php echo $isActive('/blog') ? 'aria-current="page"' : ''; ?>>Блог</a>
                 <a class="nav-link" href="/news" <?php echo $isActive('/news') ? 'aria-current="page"' : ''; ?>>Новости</a>
