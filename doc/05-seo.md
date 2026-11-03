@@ -1,6 +1,8 @@
 # 05. SEO-2026 и GEO
 
-**Проект:** Muhomor.spb.ru (AmanitaLove.ru) · **Версия CMS:** 2.5 · **Актуально на:** 24 октября 2026
+**Проект:** AmanitaCMS · **Версия CMS:** 2.5 · **Актуально на:** 3 ноября 2026
+
+**Демонстрационные сайты:** `muhomor.spb.ru`, `amanitalove.ru`
 
 ---
 
@@ -10,7 +12,7 @@ SEO-блок проекта закрывает:
 
 - **Классическое SEO:** canonical, OG, Schema.org, sitemap, robots, 301-редиректы, 404.
 - **GEO (Generative Engine Optimization)** — оптимизацию под AI-агентов (ChatGPT, Perplexity, Claude, Google AI): `llms.txt`, `ai-catalog.json` (ARD), разрешения для AI-краулеров в robots.
-- **E-E-A-T** — через `about.php` с микроразметкой `Person` (опыт, экспертиза, авторитет, доверие).
+- **E-E-A-T** — через `about.php` с микроразметкой `Organization` (опыт, экспертиза, авторитет, доверие). <!-- БЫЛО: Person -->
 - **Техническое SEO** — `Options -MultiViews`, исправление `sitemap.xml`, код 404.
 
 ---
@@ -37,8 +39,8 @@ SEO-блок проекта закрывает:
 
 ### 2.3. Два поля title
 
-- **`site_name`** — короткое название (например, «Muhomor»).
-- **`site_seo_title`** — длинный `<title>` (например, «Muhomor.spb.ru — сушёные мухоморы с доставкой»).
+- **`site_name`** — короткое название (например, «AmanitaCMS»).
+- **`site_seo_title`** — длинный `<title>` (например, «AmanitaCMS — сушёные мухоморы с доставкой»).
 
 **Где используется:**
 - `<title>` на главной — `site_seo_title`.
@@ -73,11 +75,11 @@ SEO-блок проекта закрывает:
 | `BreadcrumbList` | Хлебные крошки на всех страницах |
 | `ItemList` | Списки (каталог, блог, новости) |
 | `OnlineStore` | Главная (org-разметка магазина) |
-| `Person` | `about.php` (E-E-A-T) |
+| `Organization` | `about.php` (E-E-A-T) <!-- БЫЛО: Person --> |
 
-**`about.php`** — страница «О Грибомане»:
-- Микроразметка `Person`.
-- Фото `/uploads/griboman.webp`.
+**`about.php`** — страница «О нас»: <!-- БЫЛО: «О Грибомане» -->
+- Микроразметка `Organization`. <!-- БЫЛО: Person -->
+<!-- БЫЛО: - Фото /uploads/griboman.webp. -->
 - Ссылки в `header.php` и `footer.php`.
 - Задача — усилить E-E-A-T для Google (опыт, экспертиза, авторитет, доверие).
 
@@ -119,7 +121,7 @@ SEO-блок проекта закрывает:
 
 - **Разрешения для AI-краулеров:** GPTBot, PerplexityBot, Google-Extended, ClaudeBot, CCBot.
 - **Запреты для служебных страниц:** `/auth.php`, `/logout.php`, `/backup.php`, `/admin.php`, `/admin`, `/api/`, `/data/`.
-- **Sitemap:** `Sitemap: https://muhomor.spb.ru/sitemap.xml`.
+- **Sitemap:** `Sitemap: https://ваш-домен/sitemap.xml`. <!-- БЫЛО: https://muhomor.spb.ru/sitemap.xml -->
 
 **При смене домена** — зайдите в админку → «Настройки» → сохраните (обновит `robots.txt`).
 
@@ -192,7 +194,7 @@ AI-краулеры **явно разрешены** в `robots.php`:
 
 - **3 SEO-лонгрида** для блога — тексты написаны и переданы.
 - **HTML-шаблон подробного описания товара** — с составом, дозировкой, доставкой. Написан.
-- **Страница «О Грибомане»** (`about.php`) — Schema.org Person, фото, E-E-A-T.
+- **Страница «О нас»** (`about.php`) — Schema.org `Organization`, E-E-A-T. <!-- БЫЛО: Страница «О Грибомане» (about.php) — Schema.org Person, фото, E-E-A-T. -->
 
 ---
 
@@ -203,7 +205,7 @@ AI-краулеры **явно разрешены** в `robots.php`:
 - [ ] Canonical self-referencing работает (UTM вырезаются)
 - [ ] OG-теги выводятся (`og:title`, `og:image`, `og:type`, `og:locale`)
 - [ ] `twitter:image` выводится
-- [ ] Schema.org: `Product`, `Article`, `NewsArticle`, `FAQPage`, `BreadcrumbList`, `ItemList`, `OnlineStore`, `Person`
+- [ ] Schema.org: `Product`, `Article`, `NewsArticle`, `FAQPage`, `BreadcrumbList`, `ItemList`, `OnlineStore`, `Organization` <!-- БЫЛО: Person -->
 - [ ] Sitemap открывается (`/sitemap.xml`), `lastmod` и `priority` корректны
 - [ ] Robots.txt открывается (`/robots.txt`), AI-краулеры разрешены, служебные закрыты
 - [ ] `llms.txt` доступен
@@ -211,7 +213,7 @@ AI-краулеры **явно разрешены** в `robots.php`:
 - [ ] `/.well-known/ard.json` доступен
 - [ ] 301-редиректы HTTP→HTTPS, WWW→без WWW работают
 - [ ] 404 отдаёт код 404 (не 200)
-- [ ] `about.php` открывается, Schema.org Person выводится
+- [ ] `about.php` открывается, Schema.org `Organization` выводится <!-- БЫЛО: Person -->
 - [ ] 3 SEO-лонгрида опубликованы в блоге
 - [ ] HTML-шаблон описания товара применён
 - [ ] `Options -MultiViews` в `.htaccess`

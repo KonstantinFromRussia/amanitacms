@@ -1,6 +1,8 @@
 # 02. Установка и первоначальная настройка
 
-**Проект:** Muhomor.spb.ru (AmanitaLove.ru) · **Версия CMS:** 2.5 · **Актуально на:** 24 октября 2026
+**Проект:** AmanitaCMS · **Версия CMS:** 2.5 · **Актуально на:** 3 ноября 2026
+
+**Демонстрационные сайты:** `muhomor.spb.ru`, `amanitalove.ru`
 
 ---
 
@@ -15,7 +17,7 @@
 | Права на запись | `/data/` и `/uploads/` |
 | SMTP | Для отправки почты (порт 587, STARTTLS) |
 
-**Текущий хостинг:** DirectAdmin, Windows (пути `W:\domains\...`), PHP 7.1, LiteSpeed, гипервизор `ha005`.
+**Текущий хостинг:** DirectAdmin, Windows, PHP 7.1, LiteSpeed, гипервизор `ha005`. <!-- БЫЛО: пути W:\domains\... -->
 
 > ⚠️ **Внимание:** на Windows-хостинге `rename()` не атомарен — поэтому счётчик защищён через `flock()` (см. `01-architecture.md`, п. 5.10).
 
@@ -57,13 +59,13 @@
 
 | Поле | Что вписать |
 |------|-------------|
-| `site_name` | Короткое название (например, «Muhomor») |
-| `site_seo_title` | Длинный title для `<title>` (например, «Muhomor.spb.ru — сушёные мухоморы с доставкой») |
+| `site_name` | Короткое название (например, «Мой сайт») |
+| `site_seo_title` | Длинный title для `<title>` (например, «AmanitaCMS — сушёные мухоморы с доставкой») |
 | Контакты | Телефон, email, адрес |
 | Соцсети | TG, VK, YouTube, MAX |
 | Логотип | Загрузить через админку |
 | Favicon | Загрузить через админку |
-| GA4 ID | `G-LSRBZ45NLB` (или свой) |
+| GA4 ID | `G-XXXXXXXXXX` (ваш идентификатор) |
 | Яндекс.Метрика ID | Оставить пустым, пока не заработает (см. `08-analytics.md`) |
 
 ### 3.4. Настройка почты
@@ -71,14 +73,14 @@
 1. Откройте `includes/mail-config.php` (через FTP/файловый менеджер).
 2. Заполните SMTP-параметры:
 
-       'host'       => 'mail.muhomor.spb.ru',
+       'host'       => 'mail.example.com',
        'port'       => 587,
        'encryption' => 'tls',           // STARTTLS
-       'username'   => 'noreply@muhomor.spb.ru',
+       'username'   => 'noreply@example.com',
        'password'   => 'ВАШ_ПАРОЛЬ',
-       'from_email' => 'noreply@muhomor.spb.ru',
-       'from_name'  => 'Muhomor.spb.ru',
-       'admin_email'=> 'kon.severov2016@yandex.ru',
+       'from_email' => 'noreply@example.com',
+       'from_name'  => 'AmanitaCMS',
+       'admin_email'=> 'admin@example.com',
 
 3. Сохраните.
 4. Проверьте: оформите тестовый заказ → должно прийти письмо на `admin_email`.
@@ -209,3 +211,26 @@
 - [ ] WebP-конвертация работает (загрузить тестовую картинку)
 - [ ] `.htaccess` защищает `/data/`, `/uploads/`, `/includes/`
 - [ ] Счётчик считает (`counter.json` обновляется)
+
+---
+
+## 10. Документация (сборка HTML) <!-- НОВОЕ -->
+
+Для лендинга `amanitacms.ru` документация из MD конвертируется в HTML скриптом `build_docs.py`.
+
+**Требования:**
+- Python 3.7+
+- `pip install markdown`
+
+**Запуск (из корня проекта):**
+
+    python build_docs.py
+
+**Результат:**
+- `doc/*.html` — HTML-страницы документации.
+- `doc/index.html` — оглавление.
+- `doc/assets/docs.css` — стили (создаётся один раз, потом можно править).
+
+**Важно:** запускать из корня проекта (где лежат `doc/` и `build_docs.py`). Если запустить из другого места — создаст папки там.
+
+**Обновление:** после правки MD-файлов — просто перезапустить скрипт. HTML перезапишется, CSS останется.

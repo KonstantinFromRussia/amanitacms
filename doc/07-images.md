@@ -1,6 +1,8 @@
 # 07. Изображения и WebP
 
-**Проект:** Muhomor.spb.ru (AmanitaLove.ru) · **Версия CMS:** 2.5 · **Актуально на:** 24 октября 2026
+**Проект:** AmanitaCMS · **Версия CMS:** 2.5 · **Актуально на:** 3 ноября 2026
+
+**Демонстрационные сайты:** `muhomor.spb.ru`, `amanitalove.ru`
 
 ---
 
@@ -49,7 +51,7 @@
 
 - Оригинал (`.jpg`/`.png`) — сохраняется.
 - WebP-копия (`.webp`) — если конвертация успешна.
-- Имя — SEO-транслит.
+- Имя — SEO-транслит (или `img_<timestamp>_<random>`, по реализации). <!-- БЫЛО: Имя — SEO-транслит. -->
 
 ---
 
@@ -69,13 +71,13 @@
 
 **Пример использования:**
 
-    <?= renderPicture('/uploads/muhomor-krasnyy-100g.jpg', 'Мухомор красный 100г', 400, 400) ?>
+    <?= renderPicture('/uploads/example.jpg', 'Описание', 400, 400) ?>
 
 **Результат:**
 
     <picture>
-      <source type="image/webp" srcset="/uploads/muhomor-krasnyy-100g.webp">
-      <img src="/uploads/muhomor-krasnyy-100g.jpg" alt="Мухомор красный 100г" width="400" height="400" loading="lazy">
+      <source type="image/webp" srcset="/uploads/example.webp">
+      <img src="/uploads/example.jpg" alt="Описание" width="400" height="400" loading="lazy">
     </picture>
 
 ### 3.2. JS — `buildPicture()`
@@ -153,12 +155,14 @@
 
 ---
 
-## 7. Изображения в проекте (фактические)
+## 7. Изображения в проекте (примеры)
 
-**Логотип:** `/uploads/logo-muhomor-spb.jpg` + `.webp`.
-**Favicon:** `/uploads/favicon-muhomor-spb.ico`, `/favicon/*`.
-**Фото Грибомана:** `/uploads/griboman.webp` (для `about.php`).
-**Товары:** `/uploads/muhomor-*.jpg` + `.webp` (по сортам и весам).
+<!-- БЫЛО: Логотип: /uploads/logo-muhomor-spb.jpg + .webp. Favicon: /uploads/favicon-muhomor-spb.ico, /favicon/*. Фото Грибомана: /uploads/griboman.webp (для about.php). Товары: /uploads/muhomor-*.jpg + .webp (по сортам и весам). -->
+
+**Логотип:** `/uploads/logo.jpg` + `.webp` (пример).
+**Favicon:** `/uploads/favicon.ico`, `/favicon/*`.
+**Страница «О нас»:** `/uploads/about.webp` (или аналогичное фото команды).
+**Товары:** `/uploads/*.jpg` + `.webp` (по сортам и весам).
 **Блог/новости:** `/uploads/*.jpg` + `.webp` (SEO-имена после `rename-all-images.php`).
 
 ---
