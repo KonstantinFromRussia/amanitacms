@@ -2,7 +2,7 @@
 
 **AmanitaCMS** — лёгкая flat-file CMS без базы данных. Быстрая, безопасная и простая в установке.
 
-**Домен:** [amanitacms.ru](https://amanitacms.ru) · **Версия:** 2.5 · **Обновлено:** 2 ноября 2026
+**Домен:** [amanitacms.ru](https://amanitacms.ru) · **GitHub:** [KonstantinFromRussia/amanitacms](https://github.com/KonstantinFromRussia/amanitacms) · **Версия:** 2.5 · **Обновлено:** 3 ноября 2026
 
 ---
 
@@ -10,7 +10,7 @@
 
 AmanitaCMS — это движок для создания сайтов, который хранит все данные в обычных JSON-файлах. Никаких MySQL, никаких сложных настроек. Скопировал файлы на хостинг — и сайт работает.
 
-Создан на базе реального интернет-магазина [muhomor.spb.ru](https://muhomor.spb.ru) и доказал свою надёжность в ежедневной работе.
+Создан на базе реального интернет-магазина [muhomor.spb.ru](https://muhomor.spb.ru) и доказал свою надёжность в ежедневной работе. Ещё один пример — [amanitalove.ru](https://amanitalove.ru).
 
 ---
 
@@ -29,25 +29,27 @@ AmanitaCMS — это движок для создания сайтов, кот�
 
 ## 📚 Документация
 
-Полное описание проекта — в папке [`doc/`](doc/):
+Полное описание проекта — в папке [`doc/`](doc/). Исходники — в Markdown, для чтения в браузере — HTML-версии (генерируются `build_docs.py`).
 
-| № | Файл | О чём |
-|---|------|-------|
-| 01 | [Архитектура](doc/01-architecture.md) | Общие сведения, стек, структура, ключевые решения |
-| 02 | [Установка](doc/02-install.md) | Требования, настройка, перенос, чек-лист |
-| 03 | [Админ-панель](doc/03-admin.md) | Вход, пароли, разделы, статусы заказов, уведомления |
-| 04 | [Почта](doc/04-mail.md) | SMTP, шаблоны писем, обходные пути |
-| 05 | [SEO-2026](doc/05-seo.md) | Canonical, Schema.org, sitemap, robots, llms.txt |
-| 06 | [Безопасность](doc/06-security.md) | Защита файлов, сканеров, XSS/CSRF, flock-счётчик |
-| 07 | [Изображения](doc/07-images.md) | WebP, upload.php, renderPicture(), пакетная конвертация |
-| 08 | [Аналитика](doc/08-analytics.md) | GA4, GTM, Яндекс.Метрика |
-| 09 | [Производительность](doc/09-performance.md) | PageSpeed, инлайн CSS, отказ от Font Awesome |
-| 10 | [Тестирование](doc/10-testing.md) | Функциональное, техническое, безопасность |
-| 11 | [Roadmap](doc/11-roadmap.md) | Что сделано, что в работе, планы |
-| 12 | [Кастомизация](doc/12-customization.md) | customize_cms.py, bundle_project.py |
-| 13 | [Правила работы](doc/13-rules.md) | Жёсткие правила, формат MD, экономия токенов |
-| 14 | [Перенос в чат](doc/14-transfer.md) | Промт-шаблон для нового чата, сборка бандла |
-| 15 | [Лицензия](doc/15-license.md) | Proprietary, права на контент, данные, 18+ |
+| № | Раздел | Markdown | HTML |
+|---|--------|----------|------|
+| 01 | Архитектура | [MD](doc/01-architecture.md) | [HTML](doc/01-architecture.html) |
+| 02 | Установка | [MD](doc/02-install.md) | [HTML](doc/02-install.html) |
+| 03 | Админ-панель | [MD](doc/03-admin.md) | [HTML](doc/03-admin.html) |
+| 04 | Почта | [MD](doc/04-mail.md) | [HTML](doc/04-mail.html) |
+| 05 | SEO-2026 | [MD](doc/05-seo.md) | [HTML](doc/05-seo.html) |
+| 06 | Безопасность | [MD](doc/06-security.md) | [HTML](doc/06-security.html) |
+| 07 | Изображения | [MD](doc/07-images.md) | [HTML](doc/07-images.html) |
+| 08 | Аналитика | [MD](doc/08-analytics.md) | [HTML](doc/08-analytics.html) |
+| 09 | Производительность | [MD](doc/09-performance.md) | [HTML](doc/09-performance.html) |
+| 10 | Тестирование | [MD](doc/10-testing.md) | [HTML](doc/10-testing.html) |
+| 11 | Roadmap | [MD](doc/11-roadmap.md) | [HTML](doc/11-roadmap.html) |
+| 12 | Кастомизация | [MD](doc/12-customization.md) | [HTML](doc/12-customization.html) |
+| 13 | Правила работы | [MD](doc/13-rules.md) | [HTML](doc/13-rules.html) |
+| 14 | Перенос в чат | [MD](doc/14-transfer.md) | [HTML](doc/14-transfer.html) |
+| 15 | Лицензия | [MD](doc/15-license.md) | [HTML](doc/15-license.html) |
+
+**Оглавление HTML-версии:** [`doc/index.html`](doc/index.html).
 
 ---
 
@@ -62,20 +64,33 @@ AmanitaCMS — это движок для создания сайтов, кот�
 
 **Первый вход:** `/admin.php` → логин `admin`, пароль `secret123` → **сразу смените пароль**.
 
+### Сборка документации (опционально)
+
+Для генерации HTML-версий документации (для лендинга):
+
+```bash
+pip install markdown
+python build_docs.py
+```
+
+Результат: `doc/*.html` + `doc/index.html` + `doc/assets/docs.css`.
+
 ---
 
 ## 📂 Структура
 
 ```text
 /
+├── index.html                  # Лендинг amanitacms.ru
 ├── index.php, catalog.php, blog.php, page.php...
 ├── admin.php, api.php, upload.php
+├── build_docs.py               # MD → HTML для документации
 ├── /.well-known/ (ai-catalog.json)
 ├── /css/ (tailwind-output.css, styles.css, themes.css)
 ├── /includes/ (mailer.php, PHPMailer/)
 ├── /data/ (JSON-файлы с контентом)
 ├── /uploads/ (Изображения + .webp)
-└── /doc/ (Документация)
+└── /doc/ (Документация: *.md, *.html, assets/docs.css)
 ```
 
 ---
@@ -90,4 +105,6 @@ AmanitaCMS — это движок для создания сайтов, кот�
 
 ## 📄 Лицензия
 
-MIT License. Свободно для коммерческого и личного использования.
+**Proprietary** (проприетарная, с публичным исходным кодом). Подробнее — [`doc/15-license.md`](doc/15-license.md).
+
+Для личного использования и изучения — код доступен. Для коммерческого использования — согласование с владельцем.
