@@ -1,6 +1,4 @@
 # Секреты (НЕ ЗАЛИВАТЬ НА GITHUB)
-includes/mail-config.php
-data/settings.json
 security-check.php
 data/counter.log
 data/counter.lock
