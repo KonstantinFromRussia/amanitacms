@@ -3,6 +3,27 @@ $settings = json_decode(file_get_contents(__DIR__ . '/../data/settings.json'), t
 $siteName = $settings['site_name'] ?? 'Site Name';
 $logoUrl = !empty($settings['logo_url']) ? $settings['logo_url'] : null;
 
+// 04.11.2026: произвольные страницы из pages.json для меню (show_in_menu=1, status=1).
+// Сортировка: sort_order ASC, при равенстве — title ASC (локаль ru) — как в админке.
+$menuPages = [];
+$pagesFile = __DIR__ . '/../data/pages.json';
+if (file_exists($pagesFile)) {
+    $allPages = json_decode(file_get_contents($pagesFile), true);
+    if (is_array($allPages)) {
+        foreach ($allPages as $p) {
+            if ((int)($p['status'] ?? 0) === 1 && (int)($p['show_in_menu'] ?? 0) === 1) {
+                $menuPages[] = $p;
+            }
+        }
+        usort($menuPages, function($a, $b) {
+            $sa = (int)($a['sort_order'] ?? 10);
+            $sb = (int)($b['sort_order'] ?? 10);
+            if ($sa !== $sb) return $sa - $sb;
+            return strcmp((string)($a['title'] ?? ''), (string)($b['title'] ?? ''));
+        });
+    }
+}
+
 // Определяем активный пункт для aria-current
 $currentPath = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH) ?: '/';
 $isActive = function($path) use ($currentPath) {
@@ -84,8 +105,8 @@ if ($logoUrl) {
                 <a class="nav-link" href="/" <?php echo $isActive('/') ? 'aria-current="page"' : ''; ?>>Главная</a>
                 <a class="nav-link" href="/catalog" <?php echo $isActive('/catalog') ? 'aria-current="page"' : ''; ?>>Каталог</a>
                 
-                <!-- НОВАЯ ССЫЛКА: О Нас -->
-                <a class="nav-link" href="/about.php" <?php echo $isActive('/about.php') ? 'aria-current="page"' : ''; ?>>О Нас</a>
+                <!-- НОВАЯ ССЫЛКА: О Грибомане -->
+                <a class="nav-link" href="/about.php" <?php echo $isActive('/about.php') ? 'aria-current="page"' : ''; ?>>О Грибомане</a>
                 
                 <a class="nav-link" href="/blog" <?php echo $isActive('/blog') ? 'aria-current="page"' : ''; ?>>Блог</a>
                 <a class="nav-link" href="/news" <?php echo $isActive('/news') ? 'aria-current="page"' : ''; ?>>Новости</a>
@@ -93,6 +114,12 @@ if ($logoUrl) {
                 <a class="nav-link" href="/faq" <?php echo $isActive('/faq') ? 'aria-current="page"' : ''; ?>>FAQ</a>
                 <a class="nav-link" href="/promotions" <?php echo $isActive('/promotions') ? 'aria-current="page"' : ''; ?>>Акции</a>
                 <a class="nav-link" href="/reviews" <?php echo $isActive('/reviews') ? 'aria-current="page"' : ''; ?>>Отзывы</a>
+                <?php // 04.11.2026: произвольные страницы с show_in_menu=1 (после ручных пунктов, по sort_order). ?>
+                <?php if (!empty($menuPages)): ?>
+                    <?php foreach ($menuPages as $mp): ?>
+                        <a class="nav-link" href="/<?php echo htmlspecialchars($mp['slug']); ?>" <?php echo $isActive('/' . $mp['slug']) ? 'aria-current="page"' : ''; ?>><?php echo htmlspecialchars($mp['title']); ?></a>
+                    <?php endforeach; ?>
+                <?php endif; ?>
             </nav>
 
             <div class="flex items-center gap-3">
@@ -130,6 +157,12 @@ if ($logoUrl) {
     <a class="nav-link text-lg" href="/faq">FAQ</a>
     <a class="nav-link text-lg" href="/promotions">Акции</a>
     <a class="nav-link text-lg" href="/reviews">Отзывы</a>
+    <?php // 04.11.2026: произвольные страницы с show_in_menu=1 (мобильное меню). ?>
+    <?php if (!empty($menuPages)): ?>
+        <?php foreach ($menuPages as $mp): ?>
+            <a class="nav-link text-lg" href="/<?php echo htmlspecialchars($mp['slug']); ?>"><?php echo htmlspecialchars($mp['title']); ?></a>
+        <?php endforeach; ?>
+    <?php endif; ?>
     <form action="/search" method="get" class="mt-4">
         <input type="text" name="q" placeholder="Поиск..." value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>" class="w-full px-3 py-2 rounded-full bg-[var(--bg-secondary)] border border-[var(--border)] text-sm text-[var(--text-primary)]">
         <button type="submit" class="btn-primary w-full mt-2">🔍 Найти</button>
