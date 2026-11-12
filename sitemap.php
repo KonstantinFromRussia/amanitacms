@@ -12,6 +12,7 @@
  *   - Все статьи блога (/blog/<slug>.html)
  *   - Все новости (/news/<slug>.html)
  *   - Все акции (/promotion/<slug>.html)
+ *   - 04.11.2026: произвольные страницы из pages.json (status=1) → /<slug>
  *   - Ключевые страницы пагинации (первые N для каждого раздела)
  *
  * Что НЕ включено:
@@ -220,6 +221,23 @@ foreach ($promotions as $promo) {
         'lastmod'    => xmlDate($promo['start_date'] ?? null) ?? $promotionsMtime,
         'changefreq' => 'weekly',
         'priority'   => '0.7',
+    ];
+}
+
+// ---------- 8. Произвольные страницы (04.11.2026) ----------
+// Включаем только опубликованные (status=1). URL короткий: /<slug>.
+// itemUrl() здесь не подходит — у страниц нет .html и нет префикса.
+$pages = readJson($dataDir . 'pages.json');
+$pagesMtime = getFileMtime($dataDir . 'pages.json');
+foreach ($pages as $pg) {
+    if ((int)($pg['status'] ?? 0) !== 1) continue;
+    $slug = trim((string)($pg['slug'] ?? ''));
+    if ($slug === '') continue;
+    $urls[] = [
+        'loc'        => SITE_URL . '/' . rawurlencode($slug),
+        'lastmod'    => xmlDate($pg['updated_at'] ?? null) ?? $pagesMtime,
+        'changefreq' => 'monthly',
+        'priority'   => '0.6',
     ];
 }
 

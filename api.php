@@ -267,6 +267,7 @@ if ($action === 'reviews-submit') {
 // ============================================================
 // ОСНОВНОЙ РОУТЕР
 // ============================================================
+// 04.11.2026: добавлен action=pages для произвольных страниц.
 $allowed = [
     'products'   => 'products.json',
     'blog'       => 'blog.json',
@@ -275,7 +276,8 @@ $allowed = [
     'settings'   => 'settings.json',
     'faq'        => 'faq.json',
     'promotions' => 'promotions.json',
-    'reviews'    => 'reviews.json'
+    'reviews'    => 'reviews.json',
+    'pages'      => 'pages.json',
 ];
 
 if (!array_key_exists($action, $allowed)) {
@@ -552,9 +554,25 @@ if ($method === 'PUT') {
         elseif ($action === 'news') $titleField = $item['title'] ?? '';
         elseif ($action === 'faq') $titleField = $item['question'] ?? '';
         elseif ($action === 'promotions') $titleField = $item['title'] ?? '';
+        // 04.11.2026: slug для произвольной страницы генерим из title.
+        elseif ($action === 'pages') $titleField = $item['title'] ?? '';
 
         if (!empty($titleField) && empty($item['slug'])) {
             $item['slug'] = generateSlug($titleField);
+        }
+
+        // 04.11.2026: pages — приводим статусы к int, ставим даты, id = slug.
+        if ($action === 'pages') {
+            $item['status']       = isset($item['status'])       ? (int)(bool)$item['status']       : 0;
+            $item['show_in_menu'] = isset($item['show_in_menu']) ? (int)(bool)$item['show_in_menu'] : 0;
+            $item['sort_order']   = isset($item['sort_order'])   ? (int)$item['sort_order']         : 10;
+            $item['updated_at']   = date('Y-m-d H:i:s');
+            if (empty($item['created_at'])) {
+                $item['created_at'] = $item['updated_at'];
+            }
+            if (empty($item['id']) && !empty($item['slug'])) {
+                $item['id'] = $item['slug'];
+            }
         }
     }
     unset($item);

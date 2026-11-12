@@ -138,6 +138,19 @@ RewriteRule ^promotions$ promotions.php [L]
 RewriteRule ^reviews$    reviews.php    [L]
 RewriteRule ^search$     search.php     [L,QSA]
 
+# ------------------------------------------------------------
+# СТРАНИЦЫ ИЗ pages.json (04.11.2026)
+# ------------------------------------------------------------
+# Короткие URL /slug для произвольных страниц (О нас, Доставка и т.д.).
+# Правило стоит ПОСЛЕ всех служебных путей (catalog, blog, admin, api…),
+# поэтому перехватывает только то, что не совпало с ними.
+# Условия !-f и !-d — чтобы не ломать реальные файлы (about.php и т.д.):
+# пока about.php существует, /about.php отдаётся как файл, а /about
+# (без .php) уже попадёт сюда. Это ожидаемо — см. plan.md, раздел 6.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([a-z0-9-]+)$ page.php?type=page&slug=$1 [L,QSA]
+
 # ============================================================
 # FALLBACK → index.php (обработка 404 внутри index.php)
 # ============================================================

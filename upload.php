@@ -1,11 +1,8 @@
 <?php
 /**
  * upload.php — загрузка изображений с авто-конвертацией в WebP.
- *
- * Обновлено:
- *   - Сохраняет оригинальное имя (латиница, цифры, дефисы).
- *   - Автоматически транслитерирует кириллицу (мухомор → muhomor).
- *   - Проверяет на дубликаты (добавляет -1, -2).
+ * 
+ * 11.11.2026: Сначала ресайз (imagecopyresampled), потом WebP из уменьшенной.
  */
 
 require_once __DIR__ . '/includes/config.php';
@@ -31,7 +28,6 @@ if ($file['error'] !== UPLOAD_ERR_OK) {
     exit;
 }
 
-// Лимит 10 МБ
 $maxSize = 10 * 1024 * 1024;
 if ($file['size'] > $maxSize) {
     http_response_code(400);
@@ -39,7 +35,6 @@ if ($file['size'] > $maxSize) {
     exit;
 }
 
-// ---------- ПРОВЕРКА 1: MIME через finfo ----------
 $finfo = finfo_open(FILEINFO_MIME_TYPE);
 $mime = finfo_file($finfo, $file['tmp_name']);
 finfo_close($finfo);
@@ -59,7 +54,6 @@ if (!isset($allowed[$mime])) {
 
 $ext = $allowed[$mime];
 
-// ---------- ПРОВЕРКА 2: реальное содержимое ----------
 $imageInfo = @getimagesize($file['tmp_name']);
 if ($imageInfo === false) {
     http_response_code(400);
@@ -74,7 +68,6 @@ if (!isset($allowed[$realMime])) {
     exit;
 }
 
-// ---------- ФУНКЦИЯ ТРАНСЛИТЕРАЦИИ ----------
 function transliterateFilename($text) {
     $map = [
         'а'=>'a','б'=>'b','в'=>'v','г'=>'g','д'=>'d','е'=>'e','ё'=>'yo','ж'=>'zh','з'=>'z','и'=>'i','й'=>'y','к'=>'k','л'=>'l','м'=>'m','н'=>'n','о'=>'o','п'=>'p','р'=>'r','с'=>'s','т'=>'t','у'=>'u','ф'=>'f','х'=>'h','ц'=>'ts','ч'=>'ch','ш'=>'sh','щ'=>'sch','ъ'=>'','ы'=>'y','ь'=>'','э'=>'e','ю'=>'yu','я'=>'ya',
@@ -88,34 +81,26 @@ function transliterateFilename($text) {
     return $translit;
 }
 
-// ---------- СОХРАНЕНИЕ ----------
 $uploadsDir = __DIR__ . '/uploads/';
 if (!is_dir($uploadsDir)) {
     @mkdir($uploadsDir, 0755, true);
 }
 
-// Берем имя из загруженного файла
 $originalName = $file['name'];
 $baseName = pathinfo($originalName, PATHINFO_FILENAME);
-
-// Транслитерируем (кириллица -> латиница)
 $baseName = transliterateFilename($baseName);
-
-// Очищаем: только латиница, цифры, дефисы
 $baseName = strtolower($baseName);
 $baseName = preg_replace('/[^a-z0-9-]+/', '-', $baseName);
 $baseName = trim($baseName, '-');
 $baseName = preg_replace('/-+/', '-', $baseName);
 
-// Если имя стало пустым (например, одни спецсимволы) — генерируем случайное
 if ($baseName === '') {
     $baseName = 'img_' . time() . '_' . bin2hex(random_bytes(4));
 }
 
-// Проверка на дубликат (добавляем -1, -2)
 $finalName = $baseName;
 $counter = 1;
-while (file_exists($uploadsDir . $finalName . '.' . $ext)) {
+while (file_exists($uploadsDir . $finalName . '.' . $ext) || file_exists($uploadsDir . $finalName . '.webp')) {
     $finalName = $baseName . '-' . $counter;
     $counter++;
 }
@@ -129,7 +114,7 @@ if (!move_uploaded_file($file['tmp_name'], $origPath)) {
     exit;
 }
 
-// ---------- КОНВЕРТАЦИЯ В WEBP ----------
+// ---------- РЕСАЙЗ И КОНВЕРТАЦИЯ В WEBP ----------
 $webpPath = $uploadsDir . $finalName . '.webp';
 $webpCreated = false;
 
@@ -148,20 +133,65 @@ if (function_exists('imagewebp') && ($ext === 'jpg' || $ext === 'png')) {
         }
 
         if ($image) {
+            $width  = imagesx($image);
+            $height = imagesy($image);
+
+            // 1. Сначала ресайз (макс. 1200px)
+            $maxSide = 1200;
+            if ($width > $maxSide || $height > $maxSide) {
+                if ($width >= $height) {
+                    $newWidth  = $maxSide;
+                    $newHeight = (int)round($height * ($maxSide / $width));
+                } else {
+                    $newHeight = $maxSide;
+                    $newWidth  = (int)round($width * ($maxSide / $height));
+                }
+                
+                $newImage = imagecreatetruecolor($newWidth, $newHeight);
+                if ($newImage) {
+                    if ($ext === 'png') {
+                        imagealphablending($newImage, false);
+                        imagesavealpha($newImage, true);
+                    }
+                    if (@imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height)) {
+                        imagedestroy($image);
+                        $image = $newImage;
+                        $width = $newWidth;
+                        $height = $newHeight;
+                    } else {
+                        imagedestroy($newImage);
+                    }
+                }
+            }
+
+            // 2. Теперь создаем WebP из (возможно уменьшенной) картинки
             if (@imagewebp($image, $webpPath, 82)) {
                 $webpCreated = true;
             }
+
+            // 3. Пересохраняем уменьшенный оригинал (JPG)
+            if ($ext === 'jpg') {
+                @imagejpeg($image, $origPath, 75);
+            } elseif ($ext === 'png') {
+                @imagepng($image, $origPath, 8);
+            }
+            
             imagedestroy($image);
         }
     } catch (Throwable $e) {
-        error_log('WebP conversion failed: ' . $e->getMessage());
+        error_log('WebP/Resize failed: ' . $e->getMessage());
     }
 }
 
-// Если WebP больше оригинала — удаляем
+// Если WebP больше оригинала (уменьшенного) — удаляем WebP
 if ($webpCreated && file_exists($webpPath) && filesize($webpPath) >= filesize($origPath) * 1.05) {
     @unlink($webpPath);
     $webpCreated = false;
 }
 
-echo $origUrl;
+// Возвращаем URL WebP (если создан), иначе — URL оригинала
+if ($webpCreated) {
+    echo '/uploads/' . $finalName . '.webp';
+} else {
+    echo $origUrl;
+}

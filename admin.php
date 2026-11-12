@@ -353,6 +353,13 @@ $showDefaultPasswordWarning = !empty($_SESSION['default_password_warning']);
         .note-modal .note-modal-footer { background: #f8f9fa !important; border-top: 1px solid #ddd !important; }
         .note-modal input, .note-modal textarea, .note-modal select { background: #fff !important; color: #333 !important; border: 1px solid #ccc !important; }
         .note-editable img { width: auto !important; max-width: 100% !important; height: auto !important; }
+
+        /* 04.11.2026: стили для превью изображения страницы */
+        #page-image-preview img {
+            max-height: 120px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
     </style>
 </head>
 <body>
@@ -380,6 +387,8 @@ $showDefaultPasswordWarning = !empty($_SESSION['default_password_warning']);
             <button class="tab" data-tab="faq">❓ FAQ</button>
             <button class="tab" data-tab="promotions">🎁 Акции</button>
             <button class="tab" data-tab="reviews">⭐ Отзывы</button>
+            <!-- 04.11.2026: новая вкладка «Страницы» -->
+            <button class="tab" data-tab="page">📄 Страницы</button>
         </div>
         <div style="display: flex; gap: 1rem;">
             <a href="/" target="_blank" style="color:var(--accent); text-decoration:none; display: inline-flex; align-items: center; gap: 0.3rem;">🏠 На сайт</a>
@@ -552,6 +561,41 @@ $showDefaultPasswordWarning = !empty($_SESSION['default_password_warning']);
             <select id="review-product">
                 <option value="">— Не привязывать к товару —</option>
             </select><label>Текст отзыва *</label><textarea id="review-text" rows="5" required></textarea><label>Статус</label><select id="review-status"><option value="1">Опубликован</option><option value="0">Скрыт</option></select><div><button type="submit" class="btn btn-primary">💾 Сохранить</button><button type="button" class="btn btn-outline" onclick="clearForm('review')">✕ Отмена</button></div></form><h2>Список отзывов</h2><div id="reviews-list"></div>
+    </div>
+
+    <!-- 04.11.2026: СТРАНИЦЫ (произвольные страницы из pages.json) -->
+    <div class="form-panel" id="panel-page">
+        <form id="page-form">
+            <h2>Страница</h2>
+            <input type="hidden" id="page-id-orig">
+            <label>Заголовок (h1) *</label>
+            <input type="text" id="page-title" required>
+            <label>Slug (URL, без /) *</label>
+            <input type="text" id="page-slug" required placeholder="about, delivery, policy">
+            <p class="field-hint">Только латиница, цифры, дефис. URL будет: /slug</p>
+            <label>Содержимое (HTML)</label>
+            <textarea id="page-content" rows="8"></textarea>
+            <label>Изображение (OG + превью)</label>
+            <input type="file" id="page-image-file" accept="image/*">
+            <input type="hidden" id="page-image-url">
+            <div id="page-image-preview" class="init-hidden" style="margin-bottom:0.8rem;">
+                <img src="" alt="Превью">
+            </div>
+            <label>SEO-заголовок &lt;title&gt;</label>
+            <input type="text" id="page-seo-title" placeholder="О нас — AmanitaCMS">
+            <label>SEO-описание &lt;meta description&gt;</label>
+            <textarea id="page-seo-description" rows="2"></textarea>
+            <label><input type="checkbox" id="page-status" checked style="width:auto;margin-right:0.4rem;"> Опубликована</label>
+            <label><input type="checkbox" id="page-show-in-menu" style="width:auto;margin-right:0.4rem;"> Показывать в меню</label>
+            <label>Порядок сортировки (меньше — выше)</label>
+            <input type="number" id="page-sort-order" value="10">
+            <div>
+                <button type="submit" class="btn btn-primary">💾 Сохранить</button>
+                <button type="button" class="btn btn-outline" onclick="clearForm('page')">✕ Отмена</button>
+            </div>
+        </form>
+        <h2>Список страниц</h2>
+        <div id="pages-list"></div>
     </div>
 </div>
 

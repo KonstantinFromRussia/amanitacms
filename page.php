@@ -1,6 +1,8 @@
 <?php
 /**
  * page.php — универсальная страница для товаров, блога, новостей и акций.
+ * 04.11.2026: добавлен type=page — вывод произвольных страниц из pages.json.
+ * 11.11.2026: для type=page og:image и twitter:image теперь отдают WebP (если есть).
  */
 
 require_once __DIR__ . '/includes/config.php';
@@ -11,7 +13,8 @@ $type = $_GET['type'] ?? '';
 $slug = $_GET['slug'] ?? '';
 $id   = (int)($_GET['id'] ?? 0);
 
-$allowed = ['product', 'blog', 'news', 'promotion'];
+// 04.11.2026: добавлен type=page для произвольных страниц из pages.json
+$allowed = ['product', 'blog', 'news', 'promotion', 'page'];
 if (!in_array($type, $allowed)) { http_response_code(404); die('Страница не найдена'); }
 
 $dataDir = __DIR__ . '/data/';
@@ -21,21 +24,41 @@ elseif ($type === 'blog') $fileName = 'blog.json';
 elseif ($type === 'news') $fileName = 'news.json';
 elseif ($type === 'promotion') $fileName = 'promotions.json';
 
-$items = json_decode(file_get_contents($dataDir . $fileName), true) ?? [];
+// 04.11.2026: type=page — отдельная логика (pages.json, проверка status).
+// $items остаётся null, чтобы не уйти в общий поиск по slug/ID ниже.
+$items = null;
+if ($type !== 'page') {
+    $items = json_decode(file_get_contents($dataDir . $fileName), true) ?? [];
+}
 $item = null;
 
-// Поиск по slug или ID
-if ($slug) {
-    foreach ($items as $i) {
-        if (($i['slug'] ?? '') === $slug) { $item = $i; break; }
+// Поиск по slug или ID (для товаров/блога/новостей/акций)
+if ($type !== 'page') {
+    // Поиск по slug или ID
+    if ($slug) {
+        foreach ($items as $i) {
+            if (($i['slug'] ?? '') === $slug) { $item = $i; break; }
+        }
+    }
+    if (!$item && $id) {
+        foreach ($items as $i) {
+            if ((int)$i['id'] === $id) { $item = $i; break; }
+        }
+    }
+    if (!$item) { http_response_code(404); die('Запись не найдена'); }
+} else {
+    // 04.11.2026: type=page — ищем в pages.json, отдаём только status=1.
+    // Черновики (status=0) и несуществующие slug → 404.php (дружелюбная).
+    $pagesFile = $dataDir . 'pages.json';
+    $pages = file_exists($pagesFile) ? (json_decode(file_get_contents($pagesFile), true) ?: []) : [];
+    foreach ($pages as $p) {
+        if (($p['slug'] ?? '') === $slug) { $item = $p; break; }
+    }
+    if (!$item || (int)($item['status'] ?? 0) !== 1) {
+        require __DIR__ . '/404.php';
+        exit;
     }
 }
-if (!$item && $id) {
-    foreach ($items as $i) {
-        if ((int)$i['id'] === $id) { $item = $i; break; }
-    }
-}
-if (!$item) { http_response_code(404); die('Запись не найдена'); }
 
 // Загружаем отзывы для товара (только если тип product)
 $reviews = [];
@@ -79,6 +102,54 @@ if ($type === 'product') {
 // Общие SEO-переменные
 $page_image = '';
 $og_type = 'website';
+
+// 04.11.2026: SEO для произвольной страницы (type=page).
+if ($type === 'page') {
+    $page_title = !empty($item['seo_title']) ? $item['seo_title'] : ($item['title'] . ' — ' . $siteName);
+    $page_description = !empty($item['seo_description'])
+        ? $item['seo_description']
+        : mb_substr(strip_tags($item['content'] ?? ''), 0, 160);
+    
+    // 11.11.2026: для og:image отдаем WebP, если он есть рядом с оригиналом.
+    if (!empty($item['image'])) {
+        $imgPath = $item['image'];
+        $webpPath = preg_replace('/\.(jpe?g|png)$/i', '.webp', $imgPath);
+        $imgFs = __DIR__ . $imgPath;
+        $webpFs = __DIR__ . $webpPath;
+        if (file_exists($webpFs) && filesize($webpFs) > 0) {
+            $page_image = SITE_URL . $webpPath;
+        } else {
+            $page_image = SITE_URL . $imgPath;
+        }
+    }
+    
+    $page_url = SITE_URL . '/' . $item['slug'];
+    $og_type = 'article';
+
+    // Schema.org WebPage + BreadcrumbList
+    $schemaArray = [
+        "@context" => "https://schema.org",
+        "@type" => "WebPage",
+        "name" => $item['title'],
+        "description" => $page_description,
+        "url" => $page_url,
+        "datePublished" => $item['created_at'] ?? '',
+        "dateModified" => $item['updated_at'] ?? '',
+        "isPartOf" => ["@type" => "WebSite", "name" => $siteName, "url" => SITE_URL],
+    ];
+    if ($page_image) { $schemaArray["image"] = $page_image; }
+    $schema = '<script type="application/ld+json">' . json_encode($schemaArray, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
+
+    $breadcrumbs = [
+        "@context" => "https://schema.org",
+        "@type" => "BreadcrumbList",
+        "itemListElement" => [
+            ["@type" => "ListItem", "position" => 1, "name" => "Главная", "item" => SITE_URL],
+            ["@type" => "ListItem", "position" => 2, "name" => $item['title'], "item" => $page_url],
+        ]
+    ];
+    $breadcrumbsHtml = '<script type="application/ld+json">' . json_encode($breadcrumbs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
+}
 
 if ($type === 'product') {
     // Если есть SEO-заголовок, используем его. Иначе — старое название
@@ -167,7 +238,7 @@ if ($type === 'product') {
         "publisher" => ["@type" => "Organization", "name" => $siteName]
     ];
     $schema = '<script type="application/ld+json">' . json_encode($schemaArray, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
-} else { // promotion
+} elseif ($type === 'promotion') { // promotion
     $page_title = $item['title'] . ' — Акция на ' . $siteName;
     $desc = !empty($item['description']) ? $item['description'] : '';
     $page_description = mb_substr(strip_tags($desc), 0, 160);
@@ -177,17 +248,19 @@ if ($type === 'product') {
     $schema = '';
 }
 
-// Хлебные крошки
-$breadcrumbs = [
-    "@context" => "https://schema.org",
-    "@type" => "BreadcrumbList",
-    "itemListElement" => [
-        ["@type" => "ListItem", "position" => 1, "name" => "Главная", "item" => SITE_URL],
-        ["@type" => "ListItem", "position" => 2, "name" => ($type === 'product' ? "Каталог" : ($type === 'blog' ? "Блог" : ($type === 'news' ? "Новости" : "Акции"))), "item" => SITE_URL . '/' . ($type === 'product' ? 'catalog' : $type . 's')],
-        ["@type" => "ListItem", "position" => 3, "name" => ($type === 'product' ? $item['name'] : $item['title'])]
-    ]
-];
-$breadcrumbsHtml = '<script type="application/ld+json">' . json_encode($breadcrumbs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
+// Хлебные крошки (для товаров/блога/новостей/акций; для page — свои, см. выше)
+if ($type !== 'page') {
+    $breadcrumbs = [
+        "@context" => "https://schema.org",
+        "@type" => "BreadcrumbList",
+        "itemListElement" => [
+            ["@type" => "ListItem", "position" => 1, "name" => "Главная", "item" => SITE_URL],
+            ["@type" => "ListItem", "position" => 2, "name" => ($type === 'product' ? "Каталог" : ($type === 'blog' ? "Блог" : ($type === 'news' ? "Новости" : "Акции"))), "item" => SITE_URL . '/' . ($type === 'product' ? 'catalog' : $type . 's')],
+            ["@type" => "ListItem", "position" => 3, "name" => ($type === 'product' ? $item['name'] : $item['title'])]
+        ]
+    ];
+    $breadcrumbsHtml = '<script type="application/ld+json">' . json_encode($breadcrumbs, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
+}
 
 require_once __DIR__ . '/includes/head.php';
 require_once __DIR__ . '/includes/header.php';
@@ -296,6 +369,18 @@ echo $breadcrumbsHtml;
             </form>
         </section>
 
+        <div class="mt-8"><button onclick="history.back()" class="btn-outline">← Назад</button></div>
+    <?php elseif ($type === 'page'): ?>
+        <!-- 04.11.2026: вывод произвольной страницы из pages.json -->
+        <nav class="text-sm text-[var(--text-muted)] mb-6" aria-label="Хлебные крошки">
+            <a href="/" class="hover:text-[var(--accent)]">Главная</a> /
+            <span><?php echo htmlspecialchars($item['title']); ?></span>
+        </nav>
+        <h1 class="text-3xl md:text-4xl font-bold mb-6 text-[var(--text-primary)]"><?php echo htmlspecialchars($item['title']); ?></h1>
+        <?php if (!empty($item['image'])): ?>
+            <?php echo renderPicture($item['image'], $item['title'], 'w-full h-auto rounded-md mb-8', 'eager'); ?>
+        <?php endif; ?>
+        <div class="text-[var(--text-secondary)] leading-relaxed"><?php echo $item['content'] ?? ''; ?></div>
         <div class="mt-8"><button onclick="history.back()" class="btn-outline">← Назад</button></div>
     <?php elseif ($type === 'blog'): ?>
         <nav class="text-sm text-[var(--text-muted)] mb-6" aria-label="Хлебные крошки">
