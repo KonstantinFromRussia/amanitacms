@@ -1,0 +1,199 @@
+# ============================================================
+# Конфигурация: Вариант 2 (переименование файлов + подстрочная замена)
+# ============================================================
+
+source:
+  path: "./muhomor-spb"
+  exclude:
+    - ".git"
+    - "node_modules"
+    - "__pycache__"
+    - ".idea"
+    - ".vscode"
+    - "logs"
+    - "reports"
+    - "*.log"
+  skip_process:
+    - "admin.php"
+    - "admin.js"
+    - "api.php"
+    - "router.php"
+    - "jquery-3.6.0.min.js"
+    - "summernote-lite.js"
+    - "summernote-lite.min.js"
+    - "summernote-ru-RU.js"
+    - "summernote"
+    - "tailwind-output.css"
+
+destination:
+  path: "./muhomor-msk-files"
+  overwrite: false
+  backup_before_overwrite: true
+
+unique:
+  prefix: "msk"
+  mode: "safe"
+
+files:
+  extensions: [".php", ".css", ".js", ".html", ".htm"]
+  encoding:
+    read: "utf-8"
+    fallback: "cp1251"
+    write: "utf-8"
+
+renames:
+  - from: "/css/tailwind-output.css"
+    to: "/css/tailwind-outputmsk.css"
+    file_rename: "css/tailwind-output.css -> css/tailwind-outputmsk.css"
+    files: [".php", ".html"]
+  - from: "/css/styles.css"
+    to: "/css/stylesmsk.css"
+    file_rename: "css/styles.css -> css/stylesmsk.css"
+    files: [".php", ".html"]
+  - from: "/js/script.js"
+    to: "/js/scriptmsk.js"
+    file_rename: "js/script.js -> js/scriptmsk.js"
+    files: [".php", ".html"]
+
+html:
+  remove_comments: true
+  keep_conditional: true
+  remove_css_comments_in_style: true
+  minify_css: true
+  shuffle_index_blocks: true
+  fixed_first_block: "Hero"
+  shuffle_blocks:
+    - "Преимущества"
+    - "Популярные товары"
+    - "Превью блога"
+    - "Превью новостей"
+    - "Блок акций"
+    - "Блок отзывов"
+
+css:
+  remove_comments: true
+  keep_important: true
+  minify_css: true
+
+cleanup:
+  enabled: true
+  remove_extra_blank_lines: true
+  strip_trailing_spaces: true
+
+tailwind_patterns:
+  - "^(flex|grid|block|inline|inline-block|hidden|visible|relative|absolute|fixed|sticky|static|container|contents|flow-root|table|table-row|table-cell)$"
+  - "^(inline-flex|inline-grid|inline-table)$"
+  - "^(items|justify|content|self|place)-(start|end|center|between|around|evenly|stretch|baseline|auto|normal)($|-)"
+  - "^(flex|grid)-(row|col|wrap|nowrap|start|end|center|between|around|evenly|stretch|items|content|self)"
+  - "^(p|m)(x|y|t|b|l|r)?-"
+  - "^(w|h|min-w|min-h|max-w|max-h)-"
+  - "^(text|font|leading|tracking|align|whitespace|break)-"
+  - "^(uppercase|lowercase|capitalize|normal-case|italic|not-italic|underline|line-through|no-underline)$"
+  - "^(bg|border|outline|ring|divide|from|via|to|fill|stroke|shadow|placeholder)-"
+  - "^(opacity|transition|transform|translate|scale|rotate|skew|origin|duration|delay|ease|animate|blur|brightness|contrast|grayscale|invert|saturate|sepia|backdrop)-"
+  - "^(rounded|border)(-|$)"
+  - "^(gap|space|inset|top|bottom|left|right|z)-"
+  - "^(overflow|object|aspect|columns)-"
+  - "^(cursor|pointer-events|select|resize|scroll)-"
+  - "^(sm|md|lg|xl|2xl|3xl):"
+  - "^(hover|focus|focus-within|focus-visible|active|visited|disabled|checked|group-hover|group-focus|peer-hover|peer-focus|dark|motion-safe|motion-reduce|print|first|last|odd|even|only|empty|aria|data)-"
+  - "^(sr-only|not-sr-only|appearance|outline-none|isolate|isolation|content)-"
+  - "^(truncate|antialiased|subpixel-antialiased|list-none|list-disc|list-decimal|border-collapse|border-separate|table-auto|table-fixed|underline|overline|line-through|no-underline)$"
+
+force_process: []
+
+skip_classes:
+  - "btn"
+  - "btn-primary"
+  - "btn-secondary"
+  - "btn-ghost"
+  - "card"
+  - "card-body"
+  - "card-title"
+  - "modal"
+  - "modal-content"
+  - "modal-header"
+  - "modal-body"
+  - "modal-footer"
+  - "toast"
+  - "tooltip"
+  - "badge"
+  - "alert"
+  - "hero"
+  - "section"
+  - "feature"
+  - "features"
+  - "shots"
+  - "shot-mobile"
+  - "shot-placeholder"
+  - "doc-table"
+  - "doc-nav"
+  - "doc-content"
+  - "steps"
+  - "active"
+  - "open"
+  - "closed"
+  - "show"
+  - "hide"
+  - "cart-overlay"
+  - "cart-sidebar"
+  - "cart-items"
+  - "cart-footer"
+  - "cart-total"
+  - "cart-widget"
+  - "cart-badge"
+  - "modal-overlay"
+  - "modal__close"
+  - "modal__inner"
+  - "age-modal"
+  - "age-modal-overlay"
+  - "age-modal-content"
+  - "age-modal-buttons"
+  - "footer-link"
+  - "order-form-stack"
+  - "toast-container"
+
+skip_id_attributes: true
+skip_data_attributes: true
+
+# ============================================================
+# ВАРИАНТ 2: переименование файлов разделов + подстрочная замена
+# ============================================================
+files_rename:
+  enabled: true
+  # Пары: "blog" → "blogmsk" (файлы blog.* → blogmsk.*, подстрока blog → blogmsk везде)
+  pairs:
+    - ["blog",       "blogmsk"]
+    - ["news",       "newsmsk"]
+    - ["catalog",    "catalogmsk"]
+    - ["contacts",   "contactsmsk"]
+    - ["faq",        "faqmsk"]
+    - ["promotions", "promotionsmsk"]
+    - ["reviews",    "reviewsmsk"]
+  # Текстовые расширения для подстрочной замены
+  text_exts: [".php", ".html", ".htm", ".js", ".css", ".json", ".xml", ".txt"]
+  # Файлы без расширения, которые тоже правим
+  extra_files: [".htaccess"]
+  # Папки сторонних библиотек (не трогаем)
+  skip_dirs: ["PHPMailer", "summernote"]
+  # Одиночные вендорные файлы (не трогаем)
+  skip_files:
+    - "jquery-3.6.0.min.js"
+    - "summernote-lite.js"
+    - "summernote-lite.min.js"
+    - "summernote-ru-RU.js"
+    - "tailwind-output.css"
+  # Служебные файлы (не трогаем: слепки проекта и т.п.)
+  skip_exact:
+    - "bundle/project_bundle.txt"
+
+logging:
+  enabled: true
+  level: "INFO"
+  file: "logs/customize_files_{date}.log"
+  console: true
+
+report:
+  enabled: true
+  file: "reports/report_files_{prefix}_{date}.json"
+  include_replaced: true
