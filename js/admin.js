@@ -7,6 +7,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Глобальные переменные для хранения данных
     let products = [], blog = [], news = [], orders = [], settings = {}, faq = [], promotions = [], reviews = [];
+    // 04.11.2026: массив произвольных страниц (pages.json)
+    let pages = [];
     
     const statusDiv = document.getElementById('status');
     const tabs = document.querySelectorAll('.tab');
@@ -164,6 +166,36 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('blog-title')?.addEventListener('input', function() { document.getElementById('blog-slug').value = generateSlug(this.value); });
     document.getElementById('news-title')?.addEventListener('input', function() { document.getElementById('news-slug').value = generateSlug(this.value); });
     document.getElementById('promo-title')?.addEventListener('input', function() { document.getElementById('promo-slug').value = generateSlug(this.value); });
+    
+    // 04.11.2026: slug для страницы из title.
+    // Исправлено 11.11.2026: раньше срабатывало только пока slug пуст —
+    // после первой буквы slug «застывал». Теперь запоминаем, что slug
+    // автогенерирован, и обновляем его при каждом вводе, пока пользователь
+    // не отредактирует slug вручную.
+    (function() {
+        const titleEl = document.getElementById('page-title');
+        const slugEl  = document.getElementById('page-slug');
+        if (!titleEl || !slugEl) return;
+        let slugIsAuto = true; // slug ещё не правили вручную
+
+        titleEl.addEventListener('input', function() {
+            if (slugIsAuto) slugEl.value = generateSlug(this.value);
+        });
+
+        // Ручное редактирование slug — отключаем автогенерацию.
+        slugEl.addEventListener('input', function() {
+            slugIsAuto = false;
+        });
+
+        // При очистке формы (clearForm) — снова включаем автогенерацию.
+        const form = document.getElementById('page-form');
+        if (form) {
+            form.addEventListener('reset', () => { slugIsAuto = true; });
+        }
+        // Также при заполнении формы для редактирования (fillPageForm)
+        // автогенерацию надо выключить — slug уже задан.
+        window.__pageSlugReset = function(auto) { slugIsAuto = auto; };
+    })();
 
     // ============================================================
     // ЗАГРУЗКА ИЗОБРАЖЕНИЙ
@@ -193,6 +225,12 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('settings-logo-file')?.addEventListener('change', function() { if (this.files[0]) uploadImage(this.files[0], 'settings-logo-url'); });
     document.getElementById('settings-favicon-file')?.addEventListener('change', function() { if (this.files[0]) uploadImage(this.files[0], 'settings-favicon-url'); });
     document.getElementById('promo-image-file')?.addEventListener('change', function() { if (this.files[0]) uploadImage(this.files[0], 'promo-image-url'); });
+    // 04.11.2026: изображение страницы + превью после загрузки.
+    document.getElementById('page-image-file')?.addEventListener('change', async function() {
+        if (!this.files[0]) return;
+        await uploadImage(this.files[0], 'page-image-url');
+        updatePageImagePreview(document.getElementById('page-image-url').value);
+    });
     document.getElementById('clear-logo-btn')?.addEventListener('click', () => {
         document.getElementById('settings-logo-url').value = '';
         document.getElementById('settings-logo-file').value = '';
@@ -221,7 +259,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 error: function() { alert('Ошибка загрузки'); }
             });
         }
-        $('#prod-details, #blog-content, #news-content, #faq-answer, #promo-description').each(function() {
+        // 04.11.2026: добавлен #page-content в список Summernote-полей.
+        $('#prod-details, #blog-content, #news-content, #faq-answer, #promo-description, #page-content').each(function() {
             $(this).summernote({
                 height: 250,
                 lang: 'ru-RU',
@@ -259,9 +298,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================================
     async function loadData() {
         try {
-            const [pRes, bRes, nRes, oRes, sRes, fRes, promRes, revRes] = await Promise.all([
+            // 04.11.2026: добавлен девятый запрос — /api/pages.
+            const [pRes, bRes, nRes, oRes, sRes, fRes, promRes, revRes, pgRes] = await Promise.all([
                 fetch('/api/products'), fetch('/api/blog'), fetch('/api/news'), fetch('/api/orders'),
-                fetch('/api/settings'), fetch('/api/faq'), fetch('/api/promotions'), fetch('/api/reviews')
+                fetch('/api/settings'), fetch('/api/faq'), fetch('/api/promotions'), fetch('/api/reviews'),
+                fetch('/api/pages')
             ]);
             products = await pRes.json();
             blog = await bRes.json();
@@ -271,6 +312,9 @@ document.addEventListener('DOMContentLoaded', function() {
             faq = await fRes.json();
             promotions = await promRes.json();
             reviews = await revRes.json();
+            // 04.11.2026: страницы из pages.json.
+            pages = await pgRes.json();
+            if (!Array.isArray(pages)) pages = [];
 
             populateReviewProductSelect();
 
@@ -332,7 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
     async function saveData(type, arr) {
         const apiMap = {
             product: 'products', blog: 'blog', news: 'news', faq: 'faq',
-            promotion: 'promotions', review: 'reviews', order: 'orders'
+            promotion: 'promotions', review: 'reviews', order: 'orders',
+            page: 'pages'  // 04.11.2026: страницы
         };
         const endpoint = apiMap[type] || type;
         try {
@@ -391,6 +436,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     badge = '<span class="new-badge">🆕 Новый</span>';
                     publishBtn = `<button type="button" class="btn btn-primary btn-sm publish-btn" data-id="${item.id}" title="Опубликовать отзыв" style="background:var(--success); color:#fff;">✅</button>`;
                 }
+            } else if (type === 'page') {
+                // 04.11.2026: отображение произвольной страницы в списке.
+                title = item.title + ' (/' + item.slug + ')';
+                const st = (item.status ?? 0) ? 'опубликована' : 'черновик';
+                const menu = (item.show_in_menu ?? 0) ? ' · в меню' : '';
+                sub = st + menu + ' · sort: ' + (item.sort_order ?? 10);
             } else {
                 title = item.title;
                 sub = item.date || '';
@@ -632,6 +683,91 @@ document.addEventListener('DOMContentLoaded', function() {
         renderList('faq-list', faq, 'faq');
         renderList('promotions-list', promotions, 'promotion');
         renderList('reviews-list', reviews, 'review');
+        // 04.11.2026: список страниц (своя сортировка — по sort_order).
+        renderPagesList();
+    }
+
+    // ============================================================
+    // 04.11.2026: СТРАНИЦЫ — рендер списка и работа с формой
+    // ============================================================
+    // Сортировка: sort_order ASC, при равенстве — title ASC (локаль ru).
+    function renderPagesList() {
+        const container = document.getElementById('pages-list');
+        if (!container) return;
+
+        const sorted = [...pages].sort((a, b) => {
+            const sa = a.sort_order ?? 10, sb = b.sort_order ?? 10;
+            if (sa !== sb) return sa - sb;
+            return (a.title || '').localeCompare(b.title || '', 'ru');
+        });
+
+        if (!sorted.length) {
+            container.innerHTML = '<div class="orders-empty">Страниц пока нет. Заполните форму выше и нажмите «Сохранить».</div>';
+            return;
+        }
+
+        container.innerHTML = sorted.map(item => {
+            const st = (item.status ?? 0) ? 'опубликована' : 'черновик';
+            const menu = (item.show_in_menu ?? 0) ? ' · в меню' : '';
+            return `<div class="list-item">
+                <div class="info">
+                    <div class="title">${escapeHtml(item.title)} <span style="color:var(--text-muted);font-weight:400;">(/${escapeHtml(item.slug)})</span></div>
+                    <div class="sub">${st}${menu} · sort: ${item.sort_order ?? 10}</div>
+                </div>
+                <div class="actions">
+                    <button type="button" class="btn btn-outline btn-sm edit-page-btn" data-id="${escapeHtml(item.id)}">✏️</button>
+                    <button type="button" class="btn btn-danger btn-sm delete-page-btn" data-id="${escapeHtml(item.id)}">🗑</button>
+                </div>
+            </div>`;
+        }).join('');
+
+        // Делегирование событий (один раз).
+        if (!container.dataset.handlersAttached) {
+            container.dataset.handlersAttached = '1';
+            container.addEventListener('click', (e) => {
+                const editBtn = e.target.closest('.edit-page-btn');
+                if (editBtn) {
+                    const item = pages.find(p => p.id === editBtn.dataset.id);
+                    if (item) {
+                        fillPageForm(item);
+                        document.getElementById('panel-page').scrollIntoView({ behavior: 'smooth' });
+                    }
+                    return;
+                }
+                const delBtn = e.target.closest('.delete-page-btn');
+                if (delBtn) {
+                    deleteContext.type = 'page';
+                    deleteContext.id = delBtn.dataset.id;
+                    deleteModal.classList.add('open');
+                }
+            });
+        }
+    }
+
+    // Заполнение формы страницы для редактирования.
+    function fillPageForm(item) {
+        document.getElementById('page-id-orig').value = item.id || '';
+        document.getElementById('page-title').value = item.title || '';
+        document.getElementById('page-slug').value = item.slug || '';
+        if (window.__pageSlugReset) window.__pageSlugReset(false); // slug задан — автогенерацию выкл.
+        document.getElementById('page-image-url').value = item.image || '';
+        updatePageImagePreview(item.image || '');
+        document.getElementById('page-seo-title').value = item.seo_title || '';
+        document.getElementById('page-seo-description').value = item.seo_description || '';
+        document.getElementById('page-status').checked = (item.status ?? 0) === 1;
+        document.getElementById('page-show-in-menu').checked = (item.show_in_menu ?? 0) === 1;
+        document.getElementById('page-sort-order').value = item.sort_order ?? 10;
+        if (jQuery.fn.summernote) $('#page-content').summernote('code', item.content || '');
+        else document.getElementById('page-content').value = item.content || '';
+    }
+
+    // Превью изображения страницы.
+    function updatePageImagePreview(url) {
+        const wrap = document.getElementById('page-image-preview');
+        if (!wrap) return;
+        const img = wrap.querySelector('img');
+        if (url) { img.src = url; wrap.classList.remove('init-hidden'); }
+        else { img.src = ''; wrap.classList.add('init-hidden'); }
     }
 
     // ============================================================
@@ -736,6 +872,22 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('review-product').value = '';
             document.getElementById('review-text').value = '';
             document.getElementById('review-status').value = '1';
+        } else if (type === 'page') {
+            // 04.11.2026: очистка формы страницы.
+            document.getElementById('page-id-orig').value = '';
+            document.getElementById('page-title').value = '';
+            document.getElementById('page-slug').value = '';
+            document.getElementById('page-image-url').value = '';
+            document.getElementById('page-image-file').value = '';
+            document.getElementById('page-seo-title').value = '';
+            document.getElementById('page-seo-description').value = '';
+            document.getElementById('page-status').checked = true;
+            document.getElementById('page-show-in-menu').checked = false;
+            document.getElementById('page-sort-order').value = 10;
+            updatePageImagePreview('');
+            if (window.__pageSlugReset) window.__pageSlugReset(true); // новая страница — автогенерацию вкл.
+            if (jQuery.fn.summernote) $('#page-content').summernote('code', '');
+            else document.getElementById('page-content').value = '';
         }
     };
 
@@ -933,6 +1085,50 @@ document.addEventListener('DOMContentLoaded', function() {
         clearForm('review');
     });
 
+    // 04.11.2026: сохранение страницы.
+    document.getElementById('page-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (isImageUploading()) return;
+
+        const idOrig = document.getElementById('page-id-orig').value;
+        const slug = document.getElementById('page-slug').value.trim();
+
+        // Валидация slug: только латиница, цифры, дефис.
+        if (!/^[a-z0-9-]+$/.test(slug)) {
+            showStatus('⚠️ Slug: только латиница, цифры и дефис', true);
+            return;
+        }
+
+        // Проверка уникальности slug (кроме самого себя при редактировании).
+        const conflict = pages.find(p => p.slug === slug && p.id !== idOrig);
+        if (conflict) {
+            showStatus('⚠️ Slug «' + slug + '» уже занят', true);
+            return;
+        }
+
+        const content = jQuery.fn.summernote ? $('#page-content').summernote('code') : document.getElementById('page-content').value;
+
+        const item = {
+            id: idOrig || slug,  // id = slug (slug-подобный идентификатор)
+            slug: slug,
+            title: document.getElementById('page-title').value.trim(),
+            content: content,
+            image: document.getElementById('page-image-url').value,
+            seo_title: document.getElementById('page-seo-title').value,
+            seo_description: document.getElementById('page-seo-description').value,
+            status: document.getElementById('page-status').checked ? 1 : 0,
+            show_in_menu: document.getElementById('page-show-in-menu').checked ? 1 : 0,
+            sort_order: parseInt(document.getElementById('page-sort-order').value) || 10
+        };
+
+        const newArr = idOrig
+            ? pages.map(p => p.id === idOrig ? { ...p, ...item } : p)
+            : [...pages, item];
+
+        const ok = await saveData('page', newArr);
+        if (ok) clearForm('page');
+    });
+
     // ============================================================
     // СОХРАНЕНИЕ НАСТРОЕК
     // ============================================================
@@ -1053,6 +1249,8 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (type === 'faq')       arr = faq.filter(f => f.id !== id);
         else if (type === 'promotion') arr = promotions.filter(p => p.id !== id);
         else if (type === 'review')    arr = reviews.filter(r => r.id !== id);
+        // 04.11.2026: удаление страницы.
+        else if (type === 'page')      arr = pages.filter(p => p.id !== id);
         else { alert('Неизвестный тип: ' + type); deleteModal.classList.remove('open'); return; }
 
         await saveData(type, arr);
