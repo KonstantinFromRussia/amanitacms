@@ -2,6 +2,7 @@
 security-check.php
 data/counter.log
 data/counter.lock
+data/orders.json
 
 # Временные и системные файлы
 *.log
