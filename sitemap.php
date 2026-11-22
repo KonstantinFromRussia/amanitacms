@@ -7,7 +7,7 @@
  *
  * Что включено:
  *   - Главная
- *   - Разделы: /catalog, /blog, /news, /promotions, /reviews, /faq, /contacts, /search, /about.php
+ *   - Разделы: /catalog, /blog, /news, /promotions, /reviews, /faq, /contacts, /search
  *   - Все товары (/product/<slug>.html)
  *   - Все статьи блога (/blog/<slug>.html)
  *   - Все новости (/news/<slug>.html)
@@ -122,8 +122,6 @@ $staticPages = [
     ['/faq',        '0.7', 'monthly', 'faq.json'],
     ['/contacts',   '0.5', 'yearly',  null],
     ['/search',     '0.3', 'monthly', null],
-    // НОВАЯ СТРАНИЦА: О Грибомане (E-E-A-T)
-    ['/about.php',  '0.6', 'monthly', null],
 ];
 
 foreach ($staticPages as [$path, $priority, $changefreq, $dataFile]) {

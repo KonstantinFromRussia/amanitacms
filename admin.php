@@ -414,6 +414,8 @@ $showDefaultPasswordWarning = !empty($_SESSION['default_password_warning']);
             <label>Латинское</label><input type="text" id="prod-latin">
             <label>Категория</label><select id="prod-category"><option value="culinary">Кулинарные</option><option value="medicinal">Лечебные</option><option value="exotic">Экзотические</option></select>
             <label>Цена (₽) *</label><input type="number" id="prod-price" required>
+            <label>Старая цена (₽, для скидки)</label><input type="number" id="prod-old-price" placeholder="0">
+            <label>Наличие</label><select id="prod-stock-status"><option value="in_stock">В наличии</option><option value="out_of_stock">Нет в наличии</option><option value="on_order">На заказ</option></select>
             <label>Артикул (SKU)</label><input type="text" id="prod-sku" placeholder="Например: MUSH-001">
             <label>Изображение</label><input type="file" id="prod-image-file" accept="image/*"><input type="hidden" id="prod-image-url">
             <label>ALT-текст</label><input type="text" id="prod-alt">
@@ -585,6 +587,12 @@ $showDefaultPasswordWarning = !empty($_SESSION['default_password_warning']);
             <input type="text" id="page-seo-title" placeholder="О нас — AmanitaCMS">
             <label>SEO-описание &lt;meta description&gt;</label>
             <textarea id="page-seo-description" rows="2"></textarea>
+            
+            <!-- 12.11.2026: Поле для микроразметки Schema.org -->
+            <label>Schema.org JSON-LD (опционально)</label>
+            <textarea id="page-schema" rows="3" placeholder='{"@context":"https://schema.org","@type":"Person",...}'></textarea>
+            <p class="field-hint">Вставьте JSON-строку для микроразметки (например, Person для E-E-A-T)</p>
+            
             <label><input type="checkbox" id="page-status" checked style="width:auto;margin-right:0.4rem;"> Опубликована</label>
             <label><input type="checkbox" id="page-show-in-menu" style="width:auto;margin-right:0.4rem;"> Показывать в меню</label>
             <label>Порядок сортировки (меньше — выше)</label>

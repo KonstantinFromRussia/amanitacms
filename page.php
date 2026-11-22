@@ -3,6 +3,9 @@
  * page.php — универсальная страница для товаров, блога, новостей и акций.
  * 04.11.2026: добавлен type=page — вывод произвольных страниц из pages.json.
  * 11.11.2026: для type=page og:image и twitter:image теперь отдают WebP (если есть).
+ * 12.11.2026: для type=page (а) og_image приоритетнее image для og:image/twitter:image;
+ *             (б) вывод schema_json (строка JSON-LD) рядом с WebPage, если задан.
+ * 22.11.2026: добавлен вывод stock_status (наличие) и old_price (старая цена).
  */
 
 require_once __DIR__ . '/includes/config.php';
@@ -110,16 +113,17 @@ if ($type === 'page') {
         ? $item['seo_description']
         : mb_substr(strip_tags($item['content'] ?? ''), 0, 160);
     
-    // 11.11.2026: для og:image отдаем WebP, если он есть рядом с оригиналом.
-    if (!empty($item['image'])) {
-        $imgPath = $item['image'];
-        $webpPath = preg_replace('/\.(jpe?g|png)$/i', '.webp', $imgPath);
-        $imgFs = __DIR__ . $imgPath;
+    // 12.11.2026: og_image приоритетнее image для og:image/twitter:image.
+    // Логика WebP сохранена: если рядом с выбранным путём есть .webp — отдаём его.
+    $ogImagePath = !empty($item['og_image']) ? $item['og_image'] : ($item['image'] ?? '');
+    if ($ogImagePath !== '') {
+        $webpPath = preg_replace('/\.(jpe?g|png)$/i', '.webp', $ogImagePath);
+        $imgFs = __DIR__ . $ogImagePath;
         $webpFs = __DIR__ . $webpPath;
         if (file_exists($webpFs) && filesize($webpFs) > 0) {
             $page_image = SITE_URL . $webpPath;
         } else {
-            $page_image = SITE_URL . $imgPath;
+            $page_image = SITE_URL . $ogImagePath;
         }
     }
     
@@ -139,6 +143,20 @@ if ($type === 'page') {
     ];
     if ($page_image) { $schemaArray["image"] = $page_image; }
     $schema = '<script type="application/ld+json">' . json_encode($schemaArray, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '</script>';
+
+    // 12.11.2026: если задан schema_json (строка JSON-LD, напр. Person для E-E-A-T) —
+    // выводим рядом с WebPage. Невалидный JSON не выводим (пишем в лог), чтобы не ломать разметку.
+    if (!empty($item['schema_json'])) {
+        $extraSchema = trim((string)$item['schema_json']);
+        if ($extraSchema !== '') {
+            json_decode($extraSchema);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $schema .= '<script type="application/ld+json">' . $extraSchema . '</script>';
+            } else {
+                error_log('page.php: invalid schema_json for slug=' . ($item['slug'] ?? '') . ': ' . json_last_error_msg());
+            }
+        }
+    }
 
     $breadcrumbs = [
         "@context" => "https://schema.org",
@@ -173,10 +191,51 @@ if ($type === 'product') {
         "brand" => ["@type" => "Brand", "name" => $siteName],
         "offers" => [
             "@type" => "Offer",
+            "description" => strip_tags($page_description),
             "price" => $item['price'],
             "priceCurrency" => "RUB",
-            "availability" => "https://schema.org/InStock",
-            "url" => $page_url
+            "availability" => (function($s){
+                if ($s === 'out_of_stock') return "https://schema.org/OutOfStock";
+                if ($s === 'on_order') return "https://schema.org/PreOrder";
+                return "https://schema.org/InStock";
+            })($item['stock_status'] ?? 'in_stock'),
+            "url" => $page_url,
+            // 22.11.2026: добавлены данные о возврате и доставке для Google Search Console
+            "hasMerchantReturnPolicy" => [
+                "@type" => "MerchantReturnPolicy",
+                "applicableCountry" => "RU",
+                "returnPolicyCategory" => "https://schema.org/MerchantReturnFiniteReturnWindow",
+                "merchantReturnDays" => 14,
+                "returnMethod" => "https://schema.org/ReturnByMail",
+                "returnFees" => "https://schema.org/ReturnShippingFees"
+            ],
+            "shippingDetails" => [
+                "@type" => "OfferShippingDetails",
+                "shippingRate" => [
+                    "@type" => "MonetaryAmount",
+                    "value" => 0,
+                    "currency" => "RUB"
+                ],
+                "shippingDestination" => [
+                    "@type" => "DefinedRegion",
+                    "addressCountry" => "RU"
+                ],
+                "deliveryTime" => [
+                    "@type" => "ShippingDeliveryTime",
+                    "handlingTime" => [
+                        "@type" => "QuantitativeValue",
+                        "minValue" => 1,
+                        "maxValue" => 2,
+                        "unitCode" => "DAY"
+                    ],
+                    "transitTime" => [
+                        "@type" => "QuantitativeValue",
+                        "minValue" => 1,
+                        "maxValue" => 10,
+                        "unitCode" => "DAY"
+                    ]
+                ]
+            ]
         ]
     ];
     if ($ratingValue > 0) {
@@ -280,7 +339,18 @@ echo $breadcrumbsHtml;
             <?php echo renderPicture($item['image'], $image_alt, 'w-full h-auto rounded-md mb-8', 'eager'); ?>
         <?php endif; ?>
         <div class="flex flex-wrap gap-4 items-center mb-8">
-            <span class="text-3xl font-bold text-[var(--accent)]"><?php echo number_format($item['price'], 0, ',', ' '); ?> ₽</span>
+            <?php if (!empty($item['old_price']) && $item['old_price'] > $item['price']): ?>
+                <span class="text-xl text-[var(--text-muted)] line-through"><?php echo number_format($item['old_price'], 0, ',', ' '); ?> ₽</span>
+                <span class="text-3xl font-bold text-[var(--accent)]"><?php echo number_format($item['price'], 0, ',', ' '); ?> ₽</span>
+            <?php else: ?>
+                <span class="text-3xl font-bold text-[var(--accent)]"><?php echo number_format($item['price'], 0, ',', ' '); ?> ₽</span>
+            <?php endif; ?>
+            <?php 
+            $stock = $item['stock_status'] ?? 'in_stock';
+            $stockLabel = $stock === 'out_of_stock' ? 'Нет в наличии' : ($stock === 'on_order' ? 'На заказ' : 'В наличии');
+            $stockColor = $stock === 'out_of_stock' ? 'text-[var(--danger)]' : ($stock === 'on_order' ? 'text-[var(--warning)]' : 'text-[var(--success)]');
+            ?>
+            <span class="text-sm font-semibold <?php echo $stockColor; ?>"><?php echo $stockLabel; ?></span>
             <span class="text-sm px-3 py-1 bg-[var(--bg-elevated)] rounded-full"><?php echo htmlspecialchars($item['category'] ?? ''); ?></span>
             <?php if (!empty($item['sku'])): ?><span class="text-sm text-[var(--text-muted)]">Арт. <?php echo htmlspecialchars($item['sku']); ?></span><?php endif; ?>
             <?php if ($ratingValue > 0): ?><span class="text-sm text-[var(--accent)]">⭐ <?php echo $ratingValue; ?> / 5 (<?php echo $reviewCount; ?> отзыва)</span><?php endif; ?>

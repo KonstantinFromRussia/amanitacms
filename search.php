@@ -60,7 +60,18 @@ $found['promotions'] = array_filter($promotions, function($p) use ($searchLower)
                         </div>
                         <div class="p-4">
                             <h3 class="font-bold"><?php echo htmlspecialchars($p['name']); ?></h3>
-                            <p class="text-[var(--accent)] font-bold mt-2"><?php echo number_format($p['price'], 0, ',', ' '); ?> ₽</p>
+                            <?php 
+                            $stock = $p['stock_status'] ?? 'in_stock';
+                            $stockLabel = $stock === 'out_of_stock' ? 'Нет в наличии' : ($stock === 'on_order' ? 'На заказ' : 'В наличии');
+                            $stockColor = $stock === 'out_of_stock' ? 'text-[var(--danger)]' : ($stock === 'on_order' ? 'text-[var(--warning)]' : 'text-[var(--success)]');
+                            ?>
+                            <div class="text-xs font-semibold mt-1 <?php echo $stockColor; ?>"><?php echo $stockLabel; ?></div>
+                            <div class="mt-2 flex flex-col">
+                                <?php if (!empty($p['old_price']) && $p['old_price'] > $p['price']): ?>
+                                    <span class="text-xs text-[var(--text-muted)] line-through"><?php echo number_format($p['old_price'], 0, ',', ' '); ?> ₽</span>
+                                <?php endif; ?>
+                                <span class="text-[var(--accent)] font-bold"><?php echo number_format($p['price'], 0, ',', ' '); ?> ₽</span>
+                            </div>
                         </div>
                     </div>
                 <?php endforeach; ?>

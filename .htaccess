@@ -99,6 +99,14 @@ RewriteCond %{REQUEST_URI} ^/(phpinfo|info\.php|test\.php|debug|shell|webshell|\
 RewriteRule ^ - [F,L]
 
 # ============================================================
+# 301: about.php → /about (12.11.2026)
+# ============================================================
+# После миграции about.php → pages.json страница живёт на /about.
+# Старые ссылки/индексы на /about.php перенаправляем на /about,
+# чтобы не отдавать fallback index.php и не плодить дубли.
+RewriteRule ^about\.php$ /about [R=301,L]
+
+# ============================================================
 # КРАСИВЫЕ URL (ЧПУ)
 # ============================================================
 
@@ -147,6 +155,7 @@ RewriteRule ^search$     search.php     [L,QSA]
 # Условия !-f и !-d — чтобы не ломать реальные файлы (about.php и т.д.):
 # пока about.php существует, /about.php отдаётся как файл, а /about
 # (без .php) уже попадёт сюда. Это ожидаемо — см. plan.md, раздел 6.
+# 12.11.2026: about.php удалён, /about.php теперь 301 → /about (правило выше).
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^([a-z0-9-]+)$ page.php?type=page&slug=$1 [L,QSA]
