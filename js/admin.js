@@ -422,7 +422,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const isNew = (type === 'review' && (item.status ?? 0) === 0);
             if (type === 'product') {
                 title = (item.emoji || '') + ' ' + item.name;
-                sub = `${item.price} ₽ | ${item.category}`;
+                const stockLabel = item.stock_status === 'out_of_stock' ? 'нет в наличии' : (item.stock_status === 'on_order' ? 'на заказ' : 'в наличии');
+                const oldP = item.old_price > 0 ? ` (старая ${item.old_price} ₽)` : '';
+                sub = `${item.price} ₽${oldP} | ${item.category} | ${stockLabel}`;
             } else if (type === 'faq') {
                 title = item.question;
                 sub = (item.answer || '').replace(/<[^>]*>/g, '').substring(0, 60);
@@ -754,6 +756,9 @@ document.addEventListener('DOMContentLoaded', function() {
         updatePageImagePreview(item.image || '');
         document.getElementById('page-seo-title').value = item.seo_title || '';
         document.getElementById('page-seo-description').value = item.seo_description || '';
+        // 12.11.2026: заполнение поля Schema JSON
+        document.getElementById('page-schema').value = item.schema_json || '';
+        
         document.getElementById('page-status').checked = (item.status ?? 0) === 1;
         document.getElementById('page-show-in-menu').checked = (item.show_in_menu ?? 0) === 1;
         document.getElementById('page-sort-order').value = item.sort_order ?? 10;
@@ -815,6 +820,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('prod-latin').value = '';
             document.getElementById('prod-category').value = 'culinary';
             document.getElementById('prod-price').value = '';
+            document.getElementById('prod-old-price').value = '';
+            document.getElementById('prod-stock-status').value = 'in_stock';
             document.getElementById('prod-sku').value = '';
             document.getElementById('prod-image-file').value = '';
             document.getElementById('prod-image-url').value = '';
@@ -881,6 +888,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('page-image-file').value = '';
             document.getElementById('page-seo-title').value = '';
             document.getElementById('page-seo-description').value = '';
+            // 12.11.2026: очистка поля Schema JSON
+            document.getElementById('page-schema').value = '';
+            
             document.getElementById('page-status').checked = true;
             document.getElementById('page-show-in-menu').checked = false;
             document.getElementById('page-sort-order').value = 10;
@@ -903,6 +913,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('prod-latin').value = item.latin || '';
             document.getElementById('prod-category').value = item.category || 'culinary';
             document.getElementById('prod-price').value = item.price || '';
+            document.getElementById('prod-old-price').value = item.old_price || '';
+            document.getElementById('prod-stock-status').value = item.stock_status || 'in_stock';
             document.getElementById('prod-sku').value = item.sku || '';
             document.getElementById('prod-image-url').value = item.image || '';
             document.getElementById('prod-alt').value = item.alt || '';
@@ -976,6 +988,8 @@ document.addEventListener('DOMContentLoaded', function() {
             latin: document.getElementById('prod-latin').value,
             category: document.getElementById('prod-category').value,
             price: parseInt(document.getElementById('prod-price').value) || 0,
+            old_price: parseInt(document.getElementById('prod-old-price').value) || 0,
+            stock_status: document.getElementById('prod-stock-status').value,
             sku: document.getElementById('prod-sku').value,
             image: document.getElementById('prod-image-url').value,
             alt: document.getElementById('prod-alt').value,
@@ -1116,6 +1130,8 @@ document.addEventListener('DOMContentLoaded', function() {
             image: document.getElementById('page-image-url').value,
             seo_title: document.getElementById('page-seo-title').value,
             seo_description: document.getElementById('page-seo-description').value,
+            // 12.11.2026: сохранение микроразметки
+            schema_json: document.getElementById('page-schema').value.trim(),
             status: document.getElementById('page-status').checked ? 1 : 0,
             show_in_menu: document.getElementById('page-show-in-menu').checked ? 1 : 0,
             sort_order: parseInt(document.getElementById('page-sort-order').value) || 10

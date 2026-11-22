@@ -168,6 +168,20 @@
                   '<picture style="display:block;width:100%;height:100%;">'
               )
             : `<span class="product-card__image-placeholder" style="font-size:5rem;">${p.emoji}</span>`;
+            
+        // 22.11.2026: вывод старой цены и статуса наличия
+        const stock = p.stock_status || 'in_stock';
+        const stockLabel = stock === 'out_of_stock' ? 'Нет в наличии' : (stock === 'on_order' ? 'На заказ' : 'В наличии');
+        const stockColor = stock === 'out_of_stock' ? 'text-[var(--danger)]' : (stock === 'on_order' ? 'text-[var(--warning)]' : 'text-[var(--success)]');
+        
+        let priceHtml = `<span class="text-lg font-bold text-[var(--accent)]">${p.price.toLocaleString('ru-RU')} ₽</span>`;
+        if (p.old_price && p.old_price > p.price) {
+            priceHtml = `<div class="flex flex-col">
+                <span class="text-sm text-[var(--text-muted)] line-through leading-none">${p.old_price.toLocaleString('ru-RU')} ₽</span>
+                <span class="text-lg font-bold text-[var(--accent)] leading-tight">${p.price.toLocaleString('ru-RU')} ₽</span>
+            </div>`;
+        }
+
         return `
             <div class="product-card" data-category="${p.category}">
                 <a href="/product/${slug}.html" class="product-card__image" style="background:${p.gradient}; display:block; overflow:hidden;">
@@ -176,9 +190,10 @@
                 <div class="p-4 flex flex-col flex-1 gap-2">
                     <span class="text-xs text-[var(--accent)] font-medium uppercase tracking-wide">${p.latin || ''}</span>
                     <a href="/product/${slug}.html" class="no-underline"><h3 class="font-semibold text-[var(--text-primary)] leading-tight">${p.name}</h3></a>
+                    <div class="text-xs font-semibold mb-1 ${stockColor}">${stockLabel}</div>
                     <p class="text-xs text-[var(--text-secondary)] flex-1">${p.desc || ''}</p>
                     <div class="flex items-center justify-between mt-2">
-                        <span class="text-lg font-bold text-[var(--accent)]">${p.price.toLocaleString('ru-RU')} ₽</span>
+                        ${priceHtml}
                         <button class="btn-primary btn-sm" onclick="event.preventDefault(); event.stopPropagation(); window.addToCart(${p.id});">
                             🛒 В корзину ${inCart ? `<span style="font-size:0.7rem;opacity:0.8;">(${inCart.qty})</span>` : ''}
                         </button>
@@ -369,8 +384,10 @@
     function renderFeaturedProducts() {
         const g = document.getElementById('featuredGrid');
         if (g && window.products.length) {
-            const sorted = [...window.products].reverse();
-            g.innerHTML = sorted.slice(0, 4).map(createProductCard).join('');
+            // 22.11.2026: выводим на главной первые 4 товара, которые есть в наличии (in_stock).
+            // Порядок берется из products.json (сверху вниз).
+            const available = window.products.filter(p => (p.stock_status || 'in_stock') === 'in_stock');
+            g.innerHTML = available.slice(0, 4).map(createProductCard).join('');
         }
     }
     function renderBlogPreview() {
