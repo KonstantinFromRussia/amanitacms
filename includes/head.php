@@ -147,12 +147,18 @@ $themesCss = file_exists($themesCssPath) ? file_get_contents($themesCssPath) : '
     <?php if ($gscTag): ?><meta name="google-site-verification" content="<?php echo htmlspecialchars($gscTag); ?>"><?php endif; ?>
     <?php if ($ywmTag): ?><meta name="yandex-verification" content="<?php echo htmlspecialchars($ywmTag); ?>"><?php endif; ?>
 
-    <!-- Favicon -->
+    <!-- old Favicon -->
+    <!--
     <link rel="apple-touch-icon" href="<?php echo htmlspecialchars($faviconUrl); ?>">
     <link rel="icon" type="image/png" sizes="32x32" href="<?php echo htmlspecialchars($faviconUrl); ?>">
     <link rel="icon" type="image/png" sizes="16x16" href="<?php echo htmlspecialchars($faviconUrl); ?>">
     <link rel="shortcut icon" href="<?php echo htmlspecialchars($faviconUrl); ?>" type="image/x-icon">
     <link rel="manifest" href="/favicon/site.webmanifest">
+    -->
+   <!-- NEW Favicon -->
+    <link rel="icon" type="image/x-icon" href="<?php echo htmlspecialchars($faviconUrl); ?>">
+    <link rel="shortcut icon" href="<?php echo htmlspecialchars($faviconUrl); ?>" type="image/x-icon">
+    <link rel="apple-touch-icon" href="<?php echo htmlspecialchars($faviconUrl); ?>">
 
     <!-- CSS -->
     <link rel="stylesheet" href="/css/tailwind-output.css">

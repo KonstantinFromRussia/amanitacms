@@ -52,10 +52,6 @@ $ageCheckEnabled = $settings['age_check_enabled'] ?? 'yes';
                 <h4 class="font-semibold mb-3">Навигация</h4>
                 <ul class="space-y-2 text-sm">
                     <li><a class="footer-link" href="/catalog">Каталог</a></li>
-                    
-                    <!-- НОВАЯ ССЫЛКА: О Грибомане -->
-                    <li><a class="footer-link" href="/about.php">О Грибомане</a></li>
-                    
                     <li><a class="footer-link" href="/blog">Блог</a></li>
                     <li><a class="footer-link" href="/news">Новости</a></li>
                     <li><a class="footer-link" href="/contacts">Контакты</a></li>

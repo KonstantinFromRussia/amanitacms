@@ -4,7 +4,7 @@ $siteName = $settings['site_name'] ?? 'Site Name';
 $logoUrl = !empty($settings['logo_url']) ? $settings['logo_url'] : null;
 
 // 04.11.2026: произвольные страницы из pages.json для меню (show_in_menu=1, status=1).
-// Сортировка: sort_order ASC, при равенстве — title ASC (локаль ru) — как в админке.
+// 12.11.2026: меню полностью управляется из админки. Хардкодные ссылки удалены.
 $menuPages = [];
 $pagesFile = __DIR__ . '/../data/pages.json';
 if (file_exists($pagesFile)) {
@@ -103,18 +103,8 @@ if ($logoUrl) {
         <div class="flex flex-wrap items-center justify-between gap-3">
             <nav class="desktop-nav hidden md:flex items-center gap-6 flex-1 justify-center" aria-label="Основная навигация">
                 <a class="nav-link" href="/" <?php echo $isActive('/') ? 'aria-current="page"' : ''; ?>>Главная</a>
-                <a class="nav-link" href="/catalog" <?php echo $isActive('/catalog') ? 'aria-current="page"' : ''; ?>>Каталог</a>
                 
-                <!-- НОВАЯ ССЫЛКА: О Грибомане -->
-                <a class="nav-link" href="/about.php" <?php echo $isActive('/about.php') ? 'aria-current="page"' : ''; ?>>О Грибомане</a>
-                
-                <a class="nav-link" href="/blog" <?php echo $isActive('/blog') ? 'aria-current="page"' : ''; ?>>Блог</a>
-                <a class="nav-link" href="/news" <?php echo $isActive('/news') ? 'aria-current="page"' : ''; ?>>Новости</a>
-                <a class="nav-link" href="/contacts" <?php echo $isActive('/contacts') ? 'aria-current="page"' : ''; ?>>Контакты</a>
-                <a class="nav-link" href="/faq" <?php echo $isActive('/faq') ? 'aria-current="page"' : ''; ?>>FAQ</a>
-                <a class="nav-link" href="/promotions" <?php echo $isActive('/promotions') ? 'aria-current="page"' : ''; ?>>Акции</a>
-                <a class="nav-link" href="/reviews" <?php echo $isActive('/reviews') ? 'aria-current="page"' : ''; ?>>Отзывы</a>
-                <?php // 04.11.2026: произвольные страницы с show_in_menu=1 (после ручных пунктов, по sort_order). ?>
+                <?php // 12.11.2026: все остальные пункты меню управляются из pages.json (show_in_menu=1) ?>
                 <?php if (!empty($menuPages)): ?>
                     <?php foreach ($menuPages as $mp): ?>
                         <a class="nav-link" href="/<?php echo htmlspecialchars($mp['slug']); ?>" <?php echo $isActive('/' . $mp['slug']) ? 'aria-current="page"' : ''; ?>><?php echo htmlspecialchars($mp['title']); ?></a>
@@ -146,23 +136,14 @@ if ($logoUrl) {
         <button type="button" class="text-2xl bg-transparent border-none cursor-pointer text-[var(--text-primary)]" onclick="window.toggleMobileMenu()" aria-label="Закрыть меню">✕</button>
     </div>
     <a class="nav-link text-lg" href="/">Главная</a>
-    <a class="nav-link text-lg" href="/catalog">Каталог</a>
     
-    <!-- НОВАЯ ССЫЛКА: О Грибомане (мобильная версия) -->
-    <a class="nav-link text-lg" href="/about.php">О Грибомане</a>
-    
-    <a class="nav-link text-lg" href="/blog">Блог</a>
-    <a class="nav-link text-lg" href="/news">Новости</a>
-    <a class="nav-link text-lg" href="/contacts">Контакты</a>
-    <a class="nav-link text-lg" href="/faq">FAQ</a>
-    <a class="nav-link text-lg" href="/promotions">Акции</a>
-    <a class="nav-link text-lg" href="/reviews">Отзывы</a>
-    <?php // 04.11.2026: произвольные страницы с show_in_menu=1 (мобильное меню). ?>
+    <?php // 12.11.2026: все остальные пункты меню управляются из pages.json (show_in_menu=1) ?>
     <?php if (!empty($menuPages)): ?>
         <?php foreach ($menuPages as $mp): ?>
             <a class="nav-link text-lg" href="/<?php echo htmlspecialchars($mp['slug']); ?>"><?php echo htmlspecialchars($mp['title']); ?></a>
         <?php endforeach; ?>
     <?php endif; ?>
+    
     <form action="/search" method="get" class="mt-4">
         <input type="text" name="q" placeholder="Поиск..." value="<?php echo htmlspecialchars($_GET['q'] ?? ''); ?>" class="w-full px-3 py-2 rounded-full bg-[var(--bg-secondary)] border border-[var(--border)] text-sm text-[var(--text-primary)]">
         <button type="submit" class="btn-primary w-full mt-2">🔍 Найти</button>
