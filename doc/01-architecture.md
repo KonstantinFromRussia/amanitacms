@@ -1,49 +1,37 @@
 # 01. Архитектура и ключевые решения
 
+**Проект:** AmanitaCMS · **Версия CMS:** 2.5 · **Актуально на:** 22 ноября 2026
+
+**Демонстрационные сайты:** `muhomor.spb.ru`, `amanitalove.ru`
+
+---
+
 ## 1. Общие сведения
 
-**Название проекта:** AmanitaCMS
+- **Название:** AmanitaCMS.
+- **Тип:** Flat-file CMS (движок для сайтов) с поддержкой магазина, блога, новостей, акций, отзывов и FAQ.
+- **Архитектура:** PHP 7.1+ + JSON (без базы данных).
+- **Хостинг:** DirectAdmin, Windows, PHP 7.1, LiteSpeed, гипервизор `ha005`.
+- **Домен CMS:** `amanitacms.ru`.
+- **Демо-сайты:** `muhomor.spb.ru`, `amanitalove.ru`.
+- **GitHub (основной):** https://github.com/KonstantinFromRussia/amanitacms — актуальный код CMS.
+- **GitHub (устаревший):** https://github.com/KonstantinFromRussia/amanitalove — версия магазина от 7 мая 2026, не использовать.
 
-**Тип:** Flat-file CMS (движок для сайтов) с поддержкой магазина, блога, новостей, акций, отзывов и FAQ.
+AmanitaCMS — самодостаточная система управления содержимым для сайтов и магазинов. Все данные хранятся в JSON-файлах: сайт лёгкий, быстрый и переносимый на любой хостинг с PHP.
 
-**Архитектура:** PHP 7.1+ + JSON (без базы данных).
-
-**Хостинг:** DirectAdmin, Windows, PHP 7.1, LiteSpeed, гипервизор `ha005`.
-
-**Домен CMS:** `amanitacms.ru`
-
-**Демонстрационные сайты (работают на AmanitaCMS):** `muhomor.spb.ru`, `amanitalove.ru`
-
-**Версия CMS:** 2.5
-
-<!-- БЫЛО: **Владелец:** дядя Костя Грибоман (владелец магазина). -->
-
-**GitHub (основной):** https://github.com/KonstantinFromRussia/amanitacms — актуальный код CMS.
-
-<!-- БЫЛО: **GitHub (устаревший):** https://github.com/KonstantinFromRussia/amanitalove — версия магазина от 7 мая 2026, не использовать. -->
-**GitHub (устаревший):** https://github.com/KonstantinFromRussia/amanitalove — версия магазина от 7 мая 2026, не использовать.
-
-AmanitaCMS — это полностью самодостаточная система управления содержимым, предназначенная для создания сайтов и магазинов. Все данные хранятся в JSON-файлах, что делает сайт лёгким, быстрым и переносимым на любой хостинг с поддержкой PHP.
-
-<!-- БЫЛО: Проект представляет собой полностью самодостаточную систему управления содержимым, предназначенную для продажи сушёных мухоморов и грибов. Все данные хранятся в JSON-файлах, что делает сайт лёгким, быстрым и переносимым на любой хостинг с поддержкой PHP. (Дубликат) -->
-
-<!-- БЫЛО: Ключевая особенность текущей версии — упор на SEO-2026 (canonical, OG, Schema.org расширенная, llms.txt, ARD), оптимизацию PageSpeed (WebP, инлайн themes.css, отказ от Font Awesome), безопасность (flock-счётчик, блокировка сканеров на уровне .htaccess), рабочую почту (SMTP + шаблоны) и уникализацию CMS под разные регионы (скрипт customize_cms.py). (Дубликат) -->
-
-Ключевая особенность текущей версии — упор на SEO-2026 (canonical, OG, Schema.org расширенная, `llms.txt`, ARD), оптимизацию PageSpeed (WebP, инлайн `themes.css`, отказ от Font Awesome), безопасность (`flock()`-счётчик, блокировка сканеров на уровне `.htaccess`), рабочую почту (SMTP + шаблоны) и уникализацию CMS под разные регионы (скрипт `customize_cms.py`).
-
-<!-- БЫЛО: Проект представляет собой полностью самодостаточную систему управления содержимым, предназначенную для продажи сушёных мухоморов и грибов... (третий дубликат) -->
+Ключевая особенность версии — упор на SEO-2026 (canonical, OG, Schema.org, `llms.txt`, ARD), оптимизацию PageSpeed (WebP, инлайн `themes.css`, отказ от Font Awesome), безопасность (`flock()`-счётчик, блокировка сканеров в `.htaccess`), рабочую почту (SMTP + шаблоны) и уникализацию CMS под регионы (`customize_cms.py`).
 
 ---
 
 ## 2. Команда проекта
 
-| Роль | Имя / Ответственность |
-|------|----------------------|
-| Владелец / автор идей | Владелец AmanitaCMS <!-- БЫЛО: (дядя Костя Грибоман) --> |
-| Разработчик (внешний) | Помощь в доработке CMS, консультации (Deepseek) |
+| Роль | Ответственность |
+|------|-----------------|
+| Владелец / автор идей | Владелец AmanitaCMS |
+| Внешний разработчик (AI-ассистент) | Доработка CMS, консультации |
 | Тестировщик | Проверка 404, редиректов, SEO-выдачи, корректности писем |
 
-Проект развивается при участии внешнего разработчика, который помогает с технической реализацией, отладкой и внедрением новых функций. Все правки согласуются с владельцем. Комментарии в коде не удаляются никогда (см. `13-rules.md`).
+Все правки согласуются с владельцем. Комментарии в коде не удаляются никогда (см. `13-rules.md`).
 
 ---
 
@@ -51,16 +39,16 @@ AmanitaCMS — это полностью самодостаточная сист
 
 | Технология | Назначение |
 |------------|------------|
-| PHP 7.1 или выше | Серверная логика, генерация страниц, API, админка |
+| PHP 7.1+ | Серверная логика, генерация страниц, API, админка |
 | JSON | Хранение всех данных (товары, статьи, настройки и т.д.) |
 | JavaScript (ES6) | Динамическая подгрузка, корзина, фильтры, пагинация |
-| Tailwind CSS | Адаптивная вёрстка (скомпилирован в `tailwind-output.css`) |
+| Tailwind CSS | Адаптивная вёрстка (`tailwind-output.css`) |
 | Custom CSS | Дополнительные стили (переменные тем, анимации, модалки) |
-| Summernote | Визуальный редактор для админки (исключён из кастомизации) |
+| Summernote | Визуальный редактор админки (исключён из кастомизации) |
 | jQuery | Только для Summernote (в публичной части не используется) |
 | Inline-SVG | Иконки соцсетей и интерфейса (заменили Font Awesome) |
-| Apache + mod_rewrite | ЧПУ-ссылки, кеширование, сжатие, защита `/uploads/` |
-| LiteSpeed | Веб-сервер на хостинге (совместим с .htaccess Apache) |
+| Apache + mod_rewrite | ЧПУ, кеширование, сжатие, защита `/uploads/` |
+| LiteSpeed | Веб-сервер на хостинге (совместим с `.htaccess` Apache) |
 | localStorage | Корзина, выбор темы, возрастное подтверждение |
 | GD (php-gd) с WebP | Автоматическая конвертация изображений в WebP |
 | bcrypt (password_hash) | Хеширование пароля администратора |
@@ -69,18 +57,17 @@ AmanitaCMS — это полностью самодостаточная сист
 | Canvas API | Favicon-бейдж с числом непрочитанных событий |
 | flock() | Атомарная блокировка файлов счётчика (защита от race condition) |
 | PHPMailer | Отправка почты через SMTP (STARTTLS, порт 587) |
-| SMTP mail.example.com | Внешний почтовый сервер для уведомлений <!-- БЫЛО: SMTP mail.muhomor.spb.ru --> |
+| SMTP `mail.example.com` | Внешний почтовый сервер для уведомлений |
 | Google Analytics 4 | Аналитика (ID `G-LSRBZ45NLB`) |
-| Яндекс.Метрика | **НЕ подключена** (поле для ID в админке готово, ждём восстановления ДЦ Яндекса) |
-| Python 3.7+ / PyYAML | Скрипт уникализации CMS (`customize_cms.py`) |
-| Python 3.7+ | Скрипт сборки бандла (`bundle_project.py`) |
-| Python 3.11+ / markdown | Скрипт сборки документации (`build_docs.py`) <!-- НОВОЕ --> |
+| Яндекс.Метрика | Аналитика для РФ-аудитории (**подключена, 22.11.2026**) |
+| Python 3.7+ / PyYAML | Уникализация CMS (`customize_cms.py`) |
+| Python 3.7+ | Сборка бандла (`bundle_project.py`) |
+| Python 3.11+ / markdown | Сборка документации (`build_docs.py`) |
 
 ---
 
-## 4. Структура проекта (актуальная на 3 ноября 2026)
+## 4. Структура проекта (актуальная на 22 ноября 2026)
 
-<!-- БЫЛО: Локальная копия находится в c:\10\, структура полностью совпадает с серверной. -->
 Локальная копия находится в `/path/to/site/` (структура полностью совпадает с серверной).
 
     /
@@ -93,20 +80,19 @@ AmanitaCMS — это полностью самодостаточная сист
     ├── reviews.php                   # Отзывы (пагинация)
     ├── search.php                    # Результаты поиска
     ├── contacts.php                  # Контакты с быстрыми ссылками
-    ├── page.php                      # Универсальная страница + форма отзыва, вывод seo_title
-    ├── about.php                     # Страница «О нас» (Schema.org Organization) <!-- БЫЛО: «О Грибомане» (Schema.org Person, фото griboman.webp) -->
+    ├── page.php                      # Универсальная страница: type=product/blog/news/promotion/page, форма отзыва, seo_title
     ├── 404.php                       # Страница 404 (отдаёт код 404, не 200)
     ├── admin.php                     # Панель управления (исключён из кастомизации)
     ├── auth.php                      # Вход (bcrypt, локальный Roboto, noindex)
     ├── logout.php                    # Полная очистка сессии
-    ├── api.php                       # API (GET, PUT, POST, change-password, reviews-submit, отправка почты)
-    ├── upload.php                    # Загрузка + WebP-конвертация + транслит кириллицы
+    ├── api.php                       # API (GET, PUT, POST, change-password, reviews-submit, pages, отправка почты)
+    ├── upload.php                    # Загрузка + WebP (из уменьшенной) + сжатие JPG-оригинала + транслит кириллицы
     ├── backup.php                    # Генерация ZIP-архива
-    ├── sitemap.php                   # sitemap.xml (+ пагинация, + about.php, исправлен fileMtime)
+    ├── sitemap.php                   # sitemap.xml (+ пагинация, + pages.json, исправлен fileMtime)
     ├── robots.php                    # robots.txt (+ AI-краулеры, + закрытие admin/api/data/auth/logout/backup)
     ├── rename-all-images.php         # Одноразовый скрипт SEO-переименования старых картинок
-    ├── batch-webp.php                # Одноразовый скрипт WebP-конвертации старых картинок
-    ├── build_docs.py                 # Конвертер MD-документации в HTML для лендинга <!-- НОВОЕ -->
+    ├── batch-webp.php                # Одноразовый скрипт WebP-конвертации (исторический, см. scripts/optimize-uploads.php)
+    ├── build_docs.py                 # Конвертер MD-документации в HTML для лендинга
     ├── .htaccess                     # ЧПУ, сжатие, кеширование, защита, редиректы, блокировка сканеров, Options -MultiViews
     ├── llms.txt                      # Описание сайта для AI-агентов
     ├── README.md                     # Краткое описание проекта
@@ -132,10 +118,10 @@ AmanitaCMS — это полностью самодостаточная сист
     │   ├── icons.php                 # SVG-иконки соцсетей
     │   ├── counter.php               # trackVisitor(), getVisitorCount() (flock, защита от ботов, strpos)
     │   ├── head.php                  # Метатеги, OG, canonical, Schema.org, site_seo_title
-    │   ├── header.php                # Шапка (меню, соцсети, логотип, ссылка на about.php)
-    │   ├── footer.php                # Подвал, корзина, модалки, счётчик, ссылка на about.php
+    │   ├── header.php                # Шапка (меню, соцсети, логотип, ссылка на /about из pages.json)
+    │   ├── footer.php                # Подвал, корзина, модалки, счётчик, ссылка на /about
     │   ├── mailer.php                # Обёртка над PHPMailer (отправка писем)
-    │   ├── mail-config.php           # SMTP-настройки (mail.example.com:587, STARTTLS, noreply@) — ПАРОЛИ ЗДЕСЬ <!-- БЫЛО: mail.muhomor.spb.ru -->
+    │   ├── mail-config.php           # SMTP-настройки (mail.example.com:587, STARTTLS, noreply@) — ПАРОЛИ ЗДЕСЬ
     │   ├── email-templates.php       # Шаблоны писем (новый заказ, новый отзыв, смена статуса)
     │   ├── PHPMailer/                # Библиотека PHPMailer (PHPMailer.php, SMTP.php, Exception.php)
     │   ├── .htaccess                 # Защита includes/
@@ -145,7 +131,8 @@ AmanitaCMS — это полностью самодостаточная сист
     │
     ├── /data/                        # Данные (JSON)
     │   ├── settings.json             # Настройки + admin_login + admin_password_hash + max + site_seo_title + GA4 ID + Метрика ID
-    │   ├── products.json             # + seo_title у товаров
+    │   ├── products.json             # + seo_title, old_price, stock_status (22.11.2026)
+    │   ├── pages.json                # Произвольные страницы (04.11.2026): slug, title, content, image, seo_title, seo_description, status, show_in_menu, sort_order, created_at, updated_at
     │   ├── blog.json
     │   ├── news.json
     │   ├── faq.json
@@ -161,9 +148,11 @@ AmanitaCMS — это полностью самодостаточная сист
     ├── /fonts/                       # Roboto (локально, для auth.php и публичной части)
     ├── /webfonts/                    # Web-шрифты
     ├── /favicon/                     # Иконки сайта (+ max-icon.svg, site.webmanifest)
+    ├── /scripts/
+    │   └── optimize-uploads.php      # Принудительная оптимизация старых картинок (WebP из уменьшенной + сжатие JPG, 11.11.2026)
     ├── /doc/                         # Документация (эти файлы)
-    │   ├── assets/docs.css           # Стили документации (создаётся build_docs.py) <!-- НОВОЕ -->
-    │   └── *.html                    # Сгенерированные HTML-страницы документации <!-- НОВОЕ -->
+    │   ├── assets/docs.css           # Стили документации (создаётся build_docs.py)
+    │   └── *.html                    # Сгенерированные HTML-страницы документации
     ├── /script1/                     # Скрипт уникализации
     │   ├── customize_cms.py          # Уникализация CMS (skip_process для admin.php, admin.js, jquery, summernote)
     │   ├── config.yaml               # Конфигурация кастомизации
@@ -183,43 +172,33 @@ AmanitaCMS — это полностью самодостаточная сист
 ### 5.1. Отсутствие базы данных
 
 - Вся информация в JSON-файлах.
-- Простое развёртывание, бэкап, перенос.
-- Не нужен MySQL.
-- Минус — нет транзакций; для защиты от race condition используется `flock()` (см. 5.10).
+- Простое развёртывание, бэкап, перенос. Не нужен MySQL.
+- Минус — нет транзакций; защита от race condition — `flock()` (см. 5.10).
 
 ### 5.2. Маршрутизация (ЧПУ)
 
 | URL | Обработчик |
 |-----|------------|
-| `/catalog`, `/blog`, `/news`, `/contacts`, `/faq`, `/promotions`, `/reviews`, `/search`, `/about` | соответствующие `.php` |
+| `/catalog`, `/blog`, `/news`, `/contacts`, `/faq`, `/promotions`, `/reviews`, `/search` | соответствующие `.php` |
+| `/<slug>` | `page.php?type=page&slug=<slug>` (произвольные страницы из `pages.json`, 04.11.2026) |
 | `/product/nazvanie.html` | `page.php?type=product&slug=nazvanie` |
 | `/blog/nazvanie.html` | `page.php?type=blog&slug=nazvanie` |
 | `/news/nazvanie.html` | `page.php?type=news&slug=nazvanie` |
 | `/promotion/nazvanie.html` | `page.php?type=promotion&slug=nazvanie` |
 | `/api/products?search=...` | `api.php?action=products` |
+| `/api/pages` | `api.php?action=pages` (GET/PUT, 04.11.2026) |
 | `/api/change-password` | `api.php?action=change-password` (POST) |
 | `/api/reviews-submit` | `api.php?action=reviews-submit` (POST) |
 | `/backup.php` | Генерация ZIP (требует авторизации) |
-| `/sitemap.xml` | `sitemap.php` (`Options -MultiViews` в `.htaccess` обязателен) |
+| `/sitemap.xml` | `sitemap.php` (`Options -MultiViews` обязателен) |
 | `/robots.txt` | `robots.php` |
 
-**Редиректы** (в `.htaccess`):
-- HTTP → HTTPS (301)
-- WWW → без WWW (301)
-
-**404:**
-- В `index.php` добавлена проверка на мусорные URL.
-- Отдаётся `404.php` с кодом 404 (не 200). Тестировщик подтвердил.
-- В `robots.php` закрыты `/auth.php`, `/logout.php`, `/backup.php`, `/admin.php`, `/admin`.
-- В `auth.php` и `admin.php` добавлен `meta robots noindex, nofollow`.
+**Редиректы** (`.htaccess`): HTTP → HTTPS (301), WWW → без WWW (301).
+**404:** в `index.php` проверка мусорных URL → `404.php` (код 404). В `robots.php` закрыты `/auth.php`, `/logout.php`, `/backup.php`, `/admin.php`, `/admin`. В `auth.php`/`admin.php` — `noindex, nofollow`.
 
 ### 5.3. Автоматическое определение домена
 
-В `includes/config.php`:
-- `SITE_URL` — на основе протокола и `HTTP_HOST`.
-- `session_start()` — если ещё не запущена.
-- Подключение `helpers.php`, `icons.php`, `counter.php`.
-- Вызов `trackVisitor()`.
+В `includes/config.php`: `SITE_URL` (по протоколу и `HTTP_HOST`), `session_start()`, подключение `helpers.php`, `icons.php`, `counter.php`, вызов `trackVisitor()`.
 
 ### 5.4. Динамическая подгрузка и пагинация
 
@@ -229,253 +208,88 @@ AmanitaCMS — это полностью самодостаточная сист
 
 ### 5.5. Темы оформления
 
-Три темы: **тёмная** (по умолчанию), **светлая**, **лесная**.
-Переключение в `localStorage` (ключ `amanita_theme`).
+Три темы: **тёмная** (по умолчанию), **светлая**, **лесная**. Переключение в `localStorage` (ключ `amanita_theme`).
 
-**Известная проблема:** после кастомизации (`customize_cms.py`) слетели цвета иконок — Tailwind не сгенерировал arbitrary values (`text-[var(--accent)]`, `bg-[var(--bg-card)]`). Иконки белые. Решение отложено (нужна пересборка `tailwind-output.css`). Пока игнорируем.
+### 5.6. Админ-панель
 
-### 5.6. Админ-панель (актуальное состояние)
-
-**Аутентификация:**
-- Логин и bcrypt-хеш пароля хранятся в `data/settings.json` (`admin_login`, `admin_password_hash`).
-- Проверка через `password_verify()`, защита от timing-атак через `hash_equals()`.
-- `session_regenerate_id(true)` при входе.
-- Задержка 300 мс при неверном пароле.
-- Дефолтный пароль (`secret123`) активен только **до** первой смены.
-- Смена пароля — «Настройки» → «Смена пароля» (`POST /api/change-password`).
-- Поля `admin_login` и `admin_password_hash` **скрыты** из публичного `GET /api/settings`.
-
-**Возможности:**
-- Управление товарами, блогом, новостями, заказами, FAQ, акциями, отзывами и настройками сайта.
-- Редактор Summernote для HTML-полей. Summernote, jquery, admin.js, admin.php **исключены** из `customize_cms.py` (`skip_process`) — после кастомизации работают корректно.
-- Загрузка изображений через `upload.php` (авто-WebP, транслит кириллицы, проверка дубликатов).
-- Модалки — класс `.open` (унифицировано с публичной частью).
-- Всплывающие уведомления (тосты) при сохранении — в `admin.js`.
-
-**SEO-поля в админке:**
-- `site_seo_title` — длинный заголовок для `<title>` (короткое `site_name` отдельно).
-- `seo_title` у товаров — не меняет URL/slug.
-- GA4 ID (`G-LSRBZ45NLB`) — вписан.
-- Поле для Яндекс.Метрики — готово, ID не вставлен (ждём восстановления ДЦ Яндекса).
-
-**Модерация отзывов:**
-- `status: 0` — вверху списка.
-- Бейдж «🆕 Новый» и красная подсветка.
-- Кнопка «✅ Опубликовать» — 1 клик → `status: 1`.
-
-**Заказы:**
-- Развёрнутые карточки — клик по шапке → детали (email, адрес, состав, комментарий).
-- Статус — выпадающий список (Новый / В обработке / Отправлен / Выполнен).
-- Кнопка 🗑 — удаление.
-- Фильтр по статусу, поиск, сортировка — **в разработке** (см. `11-roadmap.md`).
-
-**Индикаторы событий:**
-- Красные бейджи на вкладках «⭐ Отзывы» и «📦 Заказы».
-- Общий счётчик в заголовке «(N новых)».
-- Favicon-бейдж с числом непрочитанных.
-- Авто-проверка каждые 60 секунд.
-- Всплывающие уведомления.
-
-> ⚠️ **Важно:** пароль **нельзя восстановить** — хранится только bcrypt-хеш. Если забыт — см. `03-admin.md`.
+Кратко: аутентификация (bcrypt + `password_verify` + `hash_equals` + `session_regenerate_id`), Summernote (исключён из кастомизации), загрузка изображений через `upload.php`, тосты. **Подробно — см. `03-admin.md`.**
 
 ### 5.7. Изображения и WebP
 
-- **Загрузка** через `upload.php`:
-  - `finfo` + `getimagesize()` (двойная валидация).
-  - Транслитерация кириллицы в имени файла.
-  - Проверка на дубликаты.
-  - Уникальное имя `img_<timestamp>_<random>.<ext>`.
-  - Создание `.webp`-копии (качество 82), если GD с WebP.
-  - Если WebP больше оригинала — удаляется.
-- **PHP-вывод:** `renderPicture()` → `<picture>` с WebP.
-- **JS-вывод:** `buildPicture()` в `script.js`.
-- **Fallback:** браузеры без WebP — оригинал.
-- **OG/Schema:** остаются на JPEG.
-- **Старые картинки:**
-  - `rename-all-images.php` — переименованы в SEO-имена (латиница, дефисы).
-  - `batch-webp.php` — одноразовая WebP-конвертация.
+- **Загрузка** через `upload.php`: `finfo` + `getimagesize()`, транслит кириллицы, проверка дубликатов.
+- **11.11.2026:** WebP создаётся **из уменьшенной копии** (макс. 1200px, качество 82); JPG-оригинал **сжимается** (качество 75, макс. 1200px) и остаётся fallback.
+- **PHP-вывод:** `renderPicture()` → `<picture>` с WebP. **JS-вывод:** `buildPicture()`.
+- **Fallback:** браузеры без WebP — оригинал. OG/Schema — на JPEG.
+- **Старые картинки:** `rename-all-images.php` (SEO-имена), `scripts/optimize-uploads.php` (WebP + сжатие JPG).
+- **Подробно — см. `07-images.md`.**
 
 ### 5.8. Безопасность
 
-- **Защита `/data/`:** `RedirectMatch 403`.
-- **Защита `/uploads/`:** `RewriteRule` + `php_flag engine off` + `RemoveHandler` + `Require all denied`.
-- **Защита `/includes/`:** `.htaccess`.
-- **Загрузка файлов:** MIME + `getimagesize()`.
-- **XSS:** `htmlspecialchars()`, `escapeHtml()`.
-- **CSRF:** `credentials: 'same-origin'`.
-- **Спам-защита отзывов:** Honeypot + арифметическая капча + rate-limit (1 в час).
-- **Листинг директорий:** `Options -Indexes`.
-- **Кеширование:** `no-store` для `/api/`, `no-cache` для HTML/PHP, `immutable` для статики.
-- **Блокировка сканеров уязвимостей (двойная защита):**
-  - `.htaccess`: `RewriteCond %{REQUEST_URI} ^/(phpinfo|info\.php|test\.php|debug|shell|webshell|\.env|\.aws|\.git|wp\-|config\.(php|json|js|yaml|env)|credentials|secrets|\.npmrc|\.boto|\.s3cfg|Dockerfile|composer\.json|database\.sql|appsettings|_profiler) [NC]` + `RewriteRule ^ - [F,L]`.
-  - `counter.php`: расширенный regex ботов (`semrush|palo alto|scanner|nmap|sqlmap|...`) + блокировка по URI.
-  - Результат: сканеры получают 403.
-- **Пароли почты** вынесены в `includes/mail-config.php` (не в публичных файлах).
+Кратко: защита `/data/`, `/uploads/`, `/includes/`; MIME + `getimagesize()`; `htmlspecialchars()`; CSRF через `same-origin`; спам-защита отзывов (honeypot + капча + rate-limit); `Options -Indexes`; кеширование; двойная блокировка сканеров (`.htaccess` + `counter.php`); пароли почты в `mail-config.php`. **Подробно — см. `06-security.md`.**
 
-### 5.9. SEO-2026 и GEO (актуальное состояние)
+### 5.9. SEO-2026 и GEO
 
-- **`canonical`** — self-referencing, UTM вырезаются.
-- **`og:image`, `og:type`, `og:locale`, `twitter:image`.**
-- **`meta robots`:** `noindex, follow` для фильтров; `noindex, nofollow` для `auth.php` и `admin.php`.
-- **Schema.org:**
-  - `Product`, `Article`, `NewsArticle`, `FAQPage`, `BreadcrumbList`, `ItemList`, `OnlineStore`.
-  - `Organization` (E-E-A-T) на `about.php`. <!-- БЫЛО: Person (E-E-A-T) на about.php. -->
-- **`site_seo_title`** в `settings.json` — длинный title, отдельно от `site_name`.
-- **`seo_title` у товаров** в `products.json` — не меняет URL/slug.
-- **`about.php`** — страница «О нас» с микроразметкой `Organization`, ссылки в header и footer. <!-- БЫЛО: страница «О Грибомане» с микроразметкой Person, фото /uploads/griboman.webp -->
-- **Sitemap:** с пагинацией, датами `lastmod`, `priority`, + `about.php`. Исправлена ошибка `Cannot redeclare fileMtime` (переименовано в `getFileMtime`, конфликт с встроенной `filemtime`).
-- **Robots.txt:** явные разрешения для AI-краулеров (GPTBot, PerplexityBot, Google-Extended, ClaudeBot, CCBot); закрыты `admin/api/data/auth/logout/backup`.
-- **`llms.txt`** — описание сайта для AI-агентов.
-- **`ai-catalog.json`** (ARD) — каталог ресурсов для AI-агентов.
-- **3 SEO-лонгрида** для блога — тексты написаны и переданы.
-- **HTML-шаблон подробного описания товара** (состав, дозировка, доставка) — написан.
-- **301-редиректы** HTTP→HTTPS и WWW→без WWW.
-- **`404.php`** отдаёт код 404.
-- **`Options -MultiViews`** в `.htaccess` — починил `sitemap.xml`.
+Кратко: canonical (self-referencing, UTM вырезаются), OG/Twitter, `noindex` для фильтров и `auth/admin`, Schema.org (`Product`, `Article`, `NewsArticle`, `FAQPage`, `BreadcrumbList`, `ItemList`, `OnlineStore`, `WebPage` для `/<slug>`, `Organization` для `/about`), sitemap с `pages.json`, robots с AI-краулерами, `llms.txt`, `ai-catalog.json` (ARD), 301, `404.php` (код 404), `Options -MultiViews`. **Подробно — см. `05-seo.md`.**
 
-### 5.10. Счётчик уникальных посетителей (после переработки)
+### 5.10. Счётчик уникальных посетителей
 
-- **`trackVisitor()`** в `includes/counter.php`.
-- **Cookie `visitor_id`** на 1 год, ставится **только после** успешной записи.
-- **Фильтры:** админы, боты, API/AJAX, не-GET.
-- **Защита от многократного вызова:** `static $alreadyTracked`.
-- **Хранение:** `data/counter.json`.
-- **Начальное значение:** 1000.
-- **Вывод:** в футере через `getVisitorCount()`.
+- `trackVisitor()` в `includes/counter.php`.
+- Cookie `visitor_id` на 1 год — только после успешной записи.
+- Фильтры: админы, боты, API/AJAX, не-GET. Защита от многократного вызова: `static $alreadyTracked`.
+- Хранение: `data/counter.json`. Начальное значение: 1000. Вывод: `getVisitorCount()` в футере.
 - **КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ (19.10): race condition.**
-  - **Причина:** `counter.json` читался/писался одновременно несколькими запросами (бот `35.240.58.49`). На Windows `rename()` не атомарен → файл пустел → `readCounter()` возвращал 1000 → сброс.
-  - **Решение:** `flock()` — эксклюзивная блокировка на 5 секунд + отдельный `counter.lock`; чтение и запись **под блокировкой**; cookie ставится после успешной записи.
-  - **Проверка:** `counter.log` — если снова сброс, он покажет причину.
+  - Причина: `counter.json` читался/писался одновременно (бот `35.240.58.49`). На Windows `rename()` не атомарен → файл пустел → `readCounter()` возвращал 1000 → сброс.
+  - Решение: `flock()` — эксклюзивная блокировка на 5 секунд + отдельный `counter.lock`; чтение и запись под блокировкой; cookie — после успешной записи.
+  - Проверка: `counter.log` — при сбросе покажет причину.
 
 ### 5.11. Резервное копирование
 
-- **`backup.php`** — ZIP с `/data/` + `/uploads/`.
-- **Требует авторизации.**
-- **Имя файла:** `<домен>-backup-YYYY-MM-DD-HHMMSS.zip`.
-- **Скачивается сразу** в браузер.
-- **В архив:** все `*.json`, все файлы из `/uploads/` (кроме `.htaccess`), `README.txt`.
+`backup.php` — ZIP с `/data/` + `/uploads/` (требует авторизации). Имя: `<домен>-backup-YYYY-MM-DD-HHMMSS.zip`. В архив: все `*.json`, все файлы из `/uploads/` (кроме `.htaccess`), `README.txt`.
 
 ### 5.12. Статусы заказов
 
-**Статусы заказов** — внутренние метки, видны только администратору в админ-панели.
-
-| Статус | Что значит | Кто ставит |
-|--------|-----------|-----------|
-| 🆕 Новый | Заказ только что поступил | Автоматически при оформлении |
-| ⏳ В обработке | Принят, собирается, проверяется | Вручную в админке |
-| 📦 Отправлен | Передан в доставку | Вручную |
-| ✅ Выполнен | Доставлен, клиент получил товар | Вручную |
-
-**Зачем нужно:**
-1. Не забыть про заказ.
-2. Отчётность.
-3. Готовность к уведомлениям — SMTP уже работает, шаблоны писем готовы, автоматические письма клиенту при смене статуса — в Roadmap (высокий приоритет).
-
-**Цветовая индикация:** «Новый» — красная подсветка слева + бейдж. Остальные — без подсветки (цветовая индикация всех статусов — в Roadmap).
-
-**Автоматическое снятие бейджа:** при смене статуса с «Новый» на любой другой красный бейдж уменьшается/исчезает.
+Внутренние метки, видны только администратору: 🆕 Новый / ⏳ В обработке / 📦 Отправлен / ✅ Выполнен. «Новый» — красная подсветка слева + бейдж. При смене статуса бейдж уменьшается/исчезает. **Подробно — см. `03-admin.md`, раздел 6.**
 
 ### 5.13. Оптимизация PageSpeed
 
-| Что | Экономия |
-|-----|----------|
-| WebP для всех изображений | −32% размера |
-| `themes.css` инлайн | −450 мс блокировки |
-| `all.min.css` удалён (Font Awesome) | −750 мс, −25 КБ |
-| Font Awesome → inline-SVG | −25 КБ |
-| Логотип: `fetchpriority="high"` + `width`/`height` | LCP ↓, CLS = 0 |
-| Логотип сжат (50 КБ → 16 КБ) | −34 КБ |
-| Шрифты preload (опционально) | −150 мс |
-
-**Результат:** CSS-блокировка снизилась с **1960 мс** до **~600 мс**.
-
-**Осталось (низкий приоритет):**
-- LCP ~2 сек — из-за окна 18+ (юридический компромисс).
-- `tailwind-output.css` — оставлен внешним (инлайн ломал вёрстку на Windows-хостинге).
+Кратко: WebP (−32%), инлайн `themes.css` (−450 мс), удалён `all.min.css` (−750 мс, −25 КБ), Font Awesome → inline-SVG (−25 КБ), логотип `fetchpriority` + `width`/`height` (LCP ↓, CLS = 0), логотип сжат (50 КБ → 16 КБ), preload шрифтов (−150 мс). CSS-блокировка: 1960 мс → ~600 мс. Осталось: LCP ~2 сек (окно 18+), `tailwind-output.css` внешний. **Подробно — см. `09-performance.md`.**
 
 ### 5.14. Индикаторы событий (для админа)
 
-**Что это:** система визуальных уведомлений о новых отзывах и заказах.
+Бейджи на вкладках «⭐ Отзывы» и «📦 Заказы», общий счётчик в заголовке, favicon-бейдж, подсветка карточек, авто-проверка каждые 60 секунд, всплывающие уведомления. Отзыв «новый» при `status: 0`, заказ — при `status: "Новый"`. **Подробно — см. `03-admin.md`, раздел 7.**
 
-**Компоненты:**
-1. **Бейдж на вкладке** — красный кружок с числом на «⭐ Отзывы» и «📦 Заказы».
-2. **Общий счётчик** — «(N новых)» рядом с заголовком «⚙️ Админ-панель сайта».
-3. **Favicon-бейдж** — цифра непрочитанных на иконке сайта в браузере.
-4. **Подсветка карточек** — красная полоса слева + бейдж «🆕 Новый».
-5. **Авто-проверка** — каждые 60 секунд.
-6. **Всплывающие уведомления** — «🆕 Новый отзыв!», «🆕 Новый заказ!».
+### 5.15. Почта и уведомления
 
-**Как работает:**
-- Отзыв «новый», если `status: 0`.
-- Заказ «новый», если `status: "Новый"`.
-- После публикации отзыва или смены статуса заказа — счётчик уменьшается.
-
-### 5.15. Почта и уведомления (НОВОЕ с 23.10)
-
-<!-- БЫЛО: Инженеры разблокировали аккаунт noreply@muhomor.spb.ru (была ошибка 550 User account (u14445mo3) is not allowed to send emails). -->
-- Инженеры **разблокировали** аккаунт `noreply@example.com` (была ошибка `550 User account is not allowed to send emails`).
-- Настроен `includes/mail-config.php`:
-  - SMTP-хост: `mail.example.com` <!-- БЫЛО: mail.muhomor.spb.ru -->
-  - Порт: `587`
-  - Шифрование: `STARTTLS`
-  - Отправитель: `noreply@example.com`
-  - **Пароли хранятся здесь** (не в публичных файлах).
-- Созданы шаблоны писем в `includes/email-templates.php`.
-- Обёртка над PHPMailer — `includes/mailer.php`.
-- Уведомления приходят на `admin@example.com` (тестовый ящик). <!-- БЫЛО: kon.severov2016@yandex.ru -->
-- Настроены уведомления: новый заказ, новый отзыв, смена статуса заказа.
-- **Внимание:** `pcweb@mail.ru` по-прежнему отправляет письма в спам (проблема Mail.ru, не наша). Для уведомлений админа используем Яндекс.
-- Внешние SMTP (Яндекс.Почта для домена, Gmail) — резервный вариант на будущее, если `mail.example.com` перестанет работать.
+- Аккаунт `noreply@example.com` разблокирован (была ошибка `550 User account is not allowed to send emails`).
+- `includes/mail-config.php`: SMTP `mail.example.com:587`, STARTTLS, отправитель `noreply@example.com`. **Пароли здесь** (не в публичных файлах).
+- Шаблоны писем — `includes/email-templates.php`. Обёртка — `includes/mailer.php`.
+- Уведомления: новый заказ, новый отзыв, смена статуса заказа.
+- **Внимание:** `pcweb@mail.ru` отправляет в спам (проблема Mail.ru). Для уведомлений админа используем Яндекс.
+- Внешние SMTP (Яндекс.Почта для домена, Gmail) — резерв на будущее.
+- **Подробно — см. `04-mail.md`.**
 
 ### 5.16. Аналитика (GA4 и Метрика)
 
-**GA4:**
-- ID `G-LSRBZ45NLB` вписан в админку.
-- Подключён и работает.
-- Google Tag Manager не грузится напрямую — ошибка `ERR_NAME_NOT_RESOLVED` для `fonts.googleapis.com`.
-- Обход: добавлен IP в файл `hosts` (`142.250.74.163 fonts.googleapis.com`).
-
-**Яндекс.Метрика:**
-- **НЕ подключена** (дата-центры Яндекса не восстановились, статистика не грузится).
-- Поле для ID в админке готово.
-- Как только заработает — вставить ID и проверить (см. `11-roadmap.md`).
+- **GA4:** ID `G-LSRBZ45NLB` вписан, подключён. GTM не грузится напрямую (`ERR_NAME_NOT_RESOLVED` для `fonts.googleapis.com`), обход — файл `hosts` (`142.250.74.163 fonts.googleapis.com`).
+- **Яндекс.Метрика:** **подключена (22.11.2026)**, ID вписан, визиты видны в «Realtime».
+- **Подробно — см. `08-analytics.md`.**
 
 ### 5.17. Уникализация CMS (`customize_cms.py`)
 
-**Назначение:** копирует CMS, заменяет CSS-классы, удаляет HTML/CSS-комментарии, перемешивает блоки внутри `<main>`. Позволяет создавать уникальные версии под разные регионы/домены.
+Копирует CMS, заменяет CSS-классы, удаляет HTML/CSS-комментарии, перемешивает блоки внутри `<main>`. Расположение: `script1/customize_cms.py`. Требования: Python 3.7+, PyYAML. Конфигурация: `script1/config.yaml`.
 
-**Расположение:** `script1/customize_cms.py`
-**Требования:** Python 3.7+, PyYAML.
-**Конфигурация:** `script1/config.yaml`.
+**КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ (23.10):** `admin.php`, `admin.js`, `jquery`, `summernote` **исключены** (добавлен `skip_process`). До этого админка и Summernote ломались после кастомизации.
 
-**КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ (23.10):** `admin.php`, `admin.js`, `jquery`, `summernote` **исключены** из скрипта (добавлен `skip_process`). До этого админка и Summernote ломались после кастомизации.
+**Dry-run:** `python customize_cms.py --dry-run --seed 12345`. Результат последнего dry-run: 1892 замены, 0 ошибок.
 
-**Dry-run** (проверка без записи): `python customize_cms.py --dry-run --seed 12345`.
-**Результат последнего dry-run:** 1892 замены, 0 ошибок.
-
-**Roadmap:** добавить `--prefix ekb`, `--prefix nsk` (уникализация под Екатеринбург, Новосибирск).
+**Roadmap:** `--prefix ekb`, `--prefix nsk` (Екатеринбург, Новосибирск).
 
 ### 5.18. Bundle-скрипт (`bundle_project.py`)
 
-**Назначение:** собирает значимые файлы в один текстовый файл для переноса в чат.
+Собирает значимые файлы в `bundle/project_bundle.txt` (413 КБ). Автоматически чистит `admin_password_hash` и `admin_login` из `settings.json`. Расположение: `script2/bundle_project.py`. Запуск: `python bundle_project.py`.
 
-**Расположение:** `script2/bundle_project.py`
-**Результат:** `bundle/project_bundle.txt` (413 КБ).
-**Автоматически чистит** `admin_password_hash` и `admin_login` из `settings.json` перед сборкой.
-**Запуск:** `python bundle_project.py`.
+### 5.19. Скрипт сборки документации (`build_docs.py`)
 
-### 5.19. Скрипт сборки документации (`build_docs.py`) <!-- НОВОЕ -->
+Конвертирует MD-файлы из `doc/` в HTML для лендинга `amanitacms.ru`. Расположение: `build_docs.py` (в корне). Требования: Python 3.7+, `pip install markdown`. Результат: `doc/*.html`, `doc/index.html`, `doc/assets/docs.css`.
 
-**Назначение:** конвертирует MD-файлы документации из `doc/` в HTML для лендинга `amanitacms.ru`.
-
-**Расположение:** `build_docs.py` (в корне проекта).
-**Требования:** Python 3.7+, `pip install markdown`.
-**Результат:** `doc/*.html`, `doc/index.html`, `doc/assets/docs.css`.
-
-**Особенности:**
-- Идемпотентный: перезапускается, `doc/*.md` не трогает.
-- Единый шаблон: шапка, сайдбар с навигацией по 15 страницам, подсветка кода.
-- Если MD-файла нет — ссылка помечается «(нет файла)», сборка продолжается.
-- CSS создаётся один раз, при повторных запусках не перезаписывается (можно править вручную).
-
-**Запуск:** `python build_docs.py` из корня проекта.
+**Особенности:** идемпотентный (`doc/*.md` не трогает), единый шаблон (шапка, сайдбар по 15 страницам, подсветка кода), при отсутствии MD — ссылка «(нет файла)», CSS создаётся один раз (можно править вручную). Запуск: `python build_docs.py` из корня.

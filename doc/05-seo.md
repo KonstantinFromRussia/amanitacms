@@ -1,6 +1,6 @@
 # 05. SEO-2026 и GEO
 
-**Проект:** AmanitaCMS · **Версия CMS:** 2.5 · **Актуально на:** 11 ноября 2026
+**Проект:** AmanitaCMS · **Версия CMS:** 2.5 · **Актуально на:** 22 ноября 2026
 
 **Демонстрационные сайты:** `muhomor.spb.ru`, `amanitalove.ru`
 
@@ -78,7 +78,7 @@ SEO-блок проекта закрывает:
 
 | Тип | Где |
 |-----|-----|
-| `Product` | Страница товара (цена, наличие, отзывы) |
+| `Product` | Страница товара (цена, **старая цена**, наличие, отзывы) |
 | `Article` | Статья блога |
 | `NewsArticle` | Новость |
 | `FAQPage` | FAQ |
@@ -92,6 +92,41 @@ SEO-блок проекта закрывает:
 - Микроразметка `Organization`.
 - Ссылки в `header.php` и `footer.php`.
 - Задача — усилить E-E-A-T для Google (опыт, экспертиза, авторитет, доверие).
+
+### 3.0. `Product`: цена, старая цена, наличие (22.11.2026)
+
+Разметка `Product` на странице товара (`page.php`) дополнена:
+
+- **`offers.price`** — текущая цена (`price` из `products.json`).
+- **`offers.priceCurrency`** — `RUB`.
+- **`offers.availability`** — по полю `stock_status`:
+
+| `stock_status` | Schema.org `availability` |
+|---|---|
+| `in_stock` | `https://schema.org/InStock` |
+| `out_of_stock` | `https://schema.org/OutOfStock` |
+| `on_order` | `https://schema.org/PreOrder` |
+
+- **Старая цена** — выводится визуально (зачёркнутая) рядом с текущей. В `Product` старая цена **не дублируется** отдельным полем; в `offers` остаётся одна актуальная `price`.
+
+**Пример:**
+
+```json
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Товар",
+  "offers": {
+    "@type": "Offer",
+    "price": "1500",
+    "priceCurrency": "RUB",
+    "availability": "https://schema.org/InStock"
+  }
+}
+```
+
+<!-- БЫЛО (до 22.11.2026): в Product были price и priceCurrency, availability не выводился. -->
+**Почему так:** `availability` — обязательный сигнал для Google Merchant / Rich Results. Без него товар может попасть в «нет в наличии» неверно. Маппинг совпадает с полями `products.json`.
 
 ### 3.1. `WebPage` для произвольных страниц (04.11.2026)
 
@@ -272,7 +307,8 @@ RewriteRule ^([a-z0-9-]+)$ page.php?type=page&slug=$1 [L,QSA]
 - [ ] Canonical self-referencing работает (UTM вырезаются)
 - [ ] OG-теги выводятся (`og:title`, `og:image`, `og:type`, `og:locale`)
 - [ ] `twitter:image` выводится
-- [ ] Schema.org: `Product`, `Article`, `NewsArticle`, `FAQPage`, `BreadcrumbList`, `ItemList`, `OnlineStore`, `Organization`, **`WebPage`**
+- [ ] Schema.org: `Product` (с `availability`), `Article`, `NewsArticle`, `FAQPage`, `BreadcrumbList`, `ItemList`, `OnlineStore`, `Organization`, **`WebPage`**
+- [ ] **`Product.offers.availability`** соответствует `stock_status` (`InStock` / `OutOfStock` / `PreOrder`). **22.11.2026**
 - [ ] Sitemap открывается (`/sitemap.xml`), `lastmod` и `priority` корректны, **произвольные страницы (`status=1`) включены**
 - [ ] Robots.txt открывается (`/robots.txt`), AI-краулеры разрешены, служебные закрыты, **`/<slug>` не закрыты**
 - [ ] `llms.txt` доступен
