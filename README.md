@@ -2,7 +2,7 @@
 
 **AmanitaCMS** — лёгкая flat-file CMS без базы данных. Быстрая, безопасная и простая в установке.
 
-**Домен:** [amanitacms.ru](https://amanitacms.ru) · **GitHub:** [KonstantinFromRussia/amanitacms](https://github.com/KonstantinFromRussia/amanitacms) · **Версия:** 2.5 · **Обновлено:** 3 ноября 2026
+**Домен:** [amanitacms.ru](https://amanitacms.ru) · **GitHub:** [KonstantinFromRussia/amanitacms](https://github.com/KonstantinFromRussia/amanitacms) · **Версия:** 2.5 · **Обновлено:** 22 ноября 2026
 
 ---
 
@@ -17,12 +17,14 @@ AmanitaCMS — это движок для создания сайтов, кот�
 ## ✨ Возможности
 
 - 🛒 **Каталог и магазин:** Товары, корзина (localStorage), оформление заказов.
+- 🏷 **Статусы товаров и цены:** Старая цена (зачёркнутая), статус наличия (`in_stock` / `out_of_stock` / `on_order`), Schema.org `availability`. На главной — только товары в наличии. **22.11.2026**
+- 📄 **Произвольные страницы:** Создание страниц в админке без правки PHP (О нас, Доставка, Политика). Короткие URL `/<slug>`, меню, sitemap, Schema.org `WebPage`. **04.11.2026**
 - 📝 **Блог и новости:** Полноценные разделы с пагинацией и HTML-редактором.
 - ⭐ **Отзывы:** Модерация, капча, защита от спама.
 - 🔐 **Админ-панель:** bcrypt-хеширование, защита от брутфорса, смена пароля.
 - 📧 **Почта:** SMTP (PHPMailer), уведомления о заказах и отзывах.
 - 📊 **SEO-2026:** Schema.org, sitemap, `llms.txt`, AI-краулеры.
-- 🖼 **WebP:** Автоматическая конвертация изображений при загрузке.
+- 🖼 **WebP:** Автоматическая конвертация изображений при загрузке. **11.11.2026:** WebP создаётся из уменьшенной копии (макс. 1200px), JPG-оригинал сжимается и остаётся как fallback.
 - 🎨 **Темы:** Тёмная, светлая, лесная (переключение в localStorage).
 
 ---
@@ -75,6 +77,16 @@ python build_docs.py
 
 Результат: `doc/*.html` + `doc/index.html` + `doc/assets/docs.css`.
 
+### Оптимизация старых изображений (опционально)
+
+Если изображения были загружены до версии 2.5, можно принудительно создать WebP и ужать JPG:
+
+```bash
+php scripts/optimize-uploads.php
+```
+
+Скрипт создаёт/пересоздаёт `.webp` и уменьшает JPG-оригиналы. **11.11.2026**
+
 ---
 
 ## 📂 Структура
@@ -85,10 +97,11 @@ python build_docs.py
 ├── index.php, catalog.php, blog.php, page.php...
 ├── admin.php, api.php, upload.php
 ├── build_docs.py               # MD → HTML для документации
+├── scripts/optimize-uploads.php # Принудительная оптимизация старых картинок
 ├── /.well-known/ (ai-catalog.json)
 ├── /css/ (tailwind-output.css, styles.css, themes.css)
 ├── /includes/ (mailer.php, PHPMailer/)
-├── /data/ (JSON-файлы с контентом)
+├── /data/ (JSON-файлы с контентом: products.json, pages.json, ...)
 ├── /uploads/ (Изображения + .webp)
 └── /doc/ (Документация: *.md, *.html, assets/docs.css)
 ```
